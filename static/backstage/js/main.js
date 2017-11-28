@@ -32,7 +32,7 @@ layui.use(['jquery', 'common', 'layer', 'element'], function() {
 
 	common.larryCmsLoadJq('../common/plus/jquery.leoweather.min.js', function() {
 		$('#weather').leoweather({
-			format: '，{时段}好！<span id="colock">现在时间是：<strong>{年}年{月}月{日}日 星期{周} {时}:{分}:{秒}</strong>，</span> <b>{城市}天气</b> {天气} {夜间气温}℃ ~ {白天气温}℃'
+			format: '{时段}好！<span id="colock">现在时间是：<strong>{年}年{月}月{日}日 星期{周} {时}:{分}:{秒}</strong></span> '
 		});
 		$('#closeInfo').on('click', function() {
 			$('#infoSwitch').hide();

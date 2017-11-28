@@ -168,7 +168,7 @@ layui.use(['layer', 'form', 'table', 'common'], function () {
                     curr: 1 //重新从第 1 页开始
                 }
                 , where: {
-                        username: user_search.val()
+                    username: user_search.val()
                 }
             });
         },

@@ -31,7 +31,8 @@ class UserHandler(BaseHandler):
             user_info = session.query(Users).filter(Users.status != '10').order_by(Users.user_id).offset(
                 limit_start).limit(int(limit))
             if username:
-                user_info = session.query(Users).filter(Users.status != '10', Users.username == username).order_by(
+                user_info = session.query(Users).filter(Users.status != '10',
+                                                        Users.username.like(username + '%')).order_by(
                     Users.user_id).offset(limit_start).limit(int(limit))
 
         for msg in user_info:
@@ -90,10 +91,11 @@ class UserHandler(BaseHandler):
             return
 
         with DBContext('default') as session:
-            # session.query(Users).filter(Users.user_id.in_(user_id)).delete(synchronize_session=False)
+            session.query(Users).filter(Users.user_id.in_(user_id)).delete(synchronize_session=False)
             session.commit()
         self.write(dict(status=0, msg='删除成功'))
 
+    @auth_login_redirect
     def put(self, *args, **kwargs):
         data = json.loads(self.request.body.decode("utf-8"))
         department = data.get('department', None)
@@ -113,8 +115,9 @@ class UserHandler(BaseHandler):
             session.commit()
         self.write(dict(status=0, msg='编辑成功'))
 
+    @auth_login_redirect
     def patch(self, *args, **kwargs):
-        '''禁用'''
+        '''禁用、启用'''
         data = json.loads(self.request.body.decode("utf-8"))
         user_id = str(data.get('user_id', None))
         msg = '用户不存在'
@@ -157,12 +160,12 @@ class RoleHandler(BaseHandler):
                 limit_start).limit(int(limit))
 
             if role_name:
-                role_info = session.query(Roles).filter(Roles.status != '10', Roles.username == role_name).order_by(
+                role_info = session.query(Roles).filter(Roles.status != '10',
+                                                        Roles.role_name.like(role_name + '%')).order_by(
                     Roles.role_id).offset(limit_start).limit(int(limit))
 
         for msg in role_info:
             data_dict = model_to_dict(msg)
-            print(data_dict)
             data_dict['ctime'] = str(data_dict['ctime'])
             role_list.append(data_dict)
 
@@ -176,15 +179,79 @@ class RoleHandler(BaseHandler):
 
     @auth_login_redirect
     def post(self, *args, **kwargs):
-        self.write('暂不支持注册')
+        data = json.loads(self.request.body.decode("utf-8"))
+        role_name = data.get('role_name', None)
+        if not role_name:
+            self.write(dict(status=-1, msg='角色名不能为空'))
+            return
+
+        with DBContext('readonly') as session:
+            user_info = session.query(Roles).filter(Roles.role_name == role_name).first()
+        if user_info:
+            self.write(dict(status=-2, msg='角色已注册'))
+            return
+
+        with DBContext('default') as session:
+            session.add(Roles(role_name=role_name, status='0'))
+            session.commit()
+        self.write(dict(status=0, msg='角色创建成功'))
 
     @auth_login_redirect
     def delete(self, *args, **kwargs):
-        self.write('暂不支持删除')
+        data = json.loads(self.request.body.decode("utf-8"))
+        role_id = data.get('role_id', None)
+        if not role_id:
+            self.write(dict(status=-1, msg='不能为空'))
+            return
+
+        with DBContext('default') as session:
+            session.query(Roles).filter(Roles.role_id.in_(role_id)).delete(synchronize_session=False)
+            session.commit()
+        self.write(dict(status=0, msg='删除成功'))
+
+    def put(self, *args, **kwargs):
+        data = json.loads(self.request.body.decode("utf-8"))
+        role_name = data.get('role_name', None)
+        role_id = data.get('role_id', None)
+
+        if not role_name:
+            self.write(dict(status=-1, msg='不能为空'))
+            return
+
+        with DBContext('default') as session:
+            session.query(Roles).filter(Roles.role_id == role_id).update({Roles.role_name: role_name})
+            session.commit()
+        self.write(dict(status=0, msg='编辑成功'))
 
     @auth_login_redirect
     def patch(self, *args, **kwargs):
-        self.write('暂不支持注册')
+        '''禁用、启用'''
+        data = json.loads(self.request.body.decode("utf-8"))
+        role_id = str(data.get('role_id', None))
+        msg = '用户不存在'
+
+        if not role_id:
+            self.write(dict(status=-1, msg='不能为空'))
+            return
+
+        with DBContext('readonly') as session:
+            role_status = session.query(Roles.status).filter(Roles.role_id == role_id, Roles.status != 10).first()
+        if not role_status:
+            self.write(dict(status=-2, msg=msg))
+            return
+
+        if role_status[0] == '0':
+            msg = '禁用成功'
+            new_status = '20'
+
+        elif role_status[0] == '20':
+            msg = '启用成功'
+            new_status = '0'
+
+        with DBContext('default') as session:
+            session.query(Roles).filter(Roles.role_id == role_id, Roles.status != 10).update({Roles.status: new_status})
+            session.commit()
+        self.write(dict(status=0, msg=msg))
 
 
 class FuncHandler(BaseHandler):

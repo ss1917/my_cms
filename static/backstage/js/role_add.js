@@ -22,7 +22,7 @@ layui.use(['jquery', 'layer', 'form', 'upload'], function () {
     form.on('submit(submit)', function (data) {
         var index = parent.layer.getFrameIndex(window.name);
         $.ajax({
-            url: "/v1/accounts/user/",
+            url: "/v1/accounts/role/",
             type: 'POST',
             data: JSON.stringify(data.field),
             contentType: "application/json; charset=utf-8",
@@ -34,7 +34,6 @@ layui.use(['jquery', 'layer', 'form', 'upload'], function () {
                     layer.msg(data.msg, {icon: 1, time: 1000});
                     layer.closeAll('page');
                     setTimeout(function () {
-                        //window.location.href = '/';
                         parent.layer.close(index);
                     }, 1000);
                 } else {

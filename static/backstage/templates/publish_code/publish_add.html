@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>角色管理</title>
+    <title>用户管理</title>
     <link rel="Shortcut Icon" href="/favicon.ico"/>
     <!-- load css -->
     <link rel="stylesheet" type="text/css" href="../../../common/frame/layui/css/layui.css" media="all">
@@ -17,23 +17,28 @@
     <div class="layui-row  animated bounceIn">
         <div class="layui-col-lg12 layui-col-md12 layui-col-sm12 layui-col-xs12">
             <fieldset class="layui-elem-field layui-field-title site-title">
-                <legend><a name="color-design">角色管理</a></legend>
+                <legend><a name="color-design">用户管理</a></legend>
             </fieldset>
 
             <div class="" id="larry_group">
                 <div class="layui-inline">
-                <input class="layui-input" name="role_name" id="role_search"  placeholder="角色名" autocomplete="off">
+                <input class="layui-input" name="username" id="user_search"  placeholder="用户名" autocomplete="off">
                 </div>
-                <button class="layui-btn" data-type="search">搜索</button>
-                <button class="layui-btn" data-type="add"><i class="layui-icon">&#xe61f;</i><cite>添加角色</cite></button>
+                <button class="layui-btn" data-type="search"><i class="layui-icon"></i><cite>搜索</cite></button>
+                <button class="layui-btn" data-type="add"><i class="layui-icon">&#xe61f;</i><cite>增加用户</cite></button>
+                <button class="layui-btn layui-btn-normal" data-type="edit"><i
+                        class="layui-icon">&#xe642;</i><cite>修改用户</cite></button>
+                <button class="layui-btn layui-btn-danger" data-type="del"><i
+                        class="layui-icon">&#xe640;</i><cite>删除用户</cite></button>
+
             </div>
         </div>
 
         <div class="layui-col-lg10 layui-col-md10 layui-col-sm12 layui-col-xs12">
             <div class="user-tables">
-                <table id="roleTables" lay-filter="roleTables"></table>
+                <table id="userTables" lay-filter="userTables"></table>
                 <script type="text/html" id="switchTpl">
-                    <input type="checkbox" name="role_id" value="{{d.role_id}}" lay-skin="switch" lay-text="启用|已禁用"
+                    <input type="checkbox" name="user_id" value="{{d.user_id}}" lay-skin="switch" lay-text="启用|已禁用"
                            lay-filter="sexDemo" {{ d.status== 0 ? 'checked' : '' }}>
                 </script>
             </div>
@@ -41,15 +46,14 @@
     </div>
 </div>
 
-<script type="text/html" id="rolebar">
+<script type="text/html" id="userbar">
     <a class="layui-btn layui-btn-mini" lay-event="edit">编辑</a>
-    <a class="layui-btn layui-btn-primary layui-btn-mini" lay-event="shouquan">用户</a>
     <a class="layui-btn layui-btn-normal layui-btn-mini" lay-event="shouquan">授权</a>
     <a class="layui-btn layui-btn-danger layui-btn-mini" lay-event="del">删除</a>
 </script>
 <!-- 加载js文件 -->
 <script type="text/javascript" src="../../../common/frame/layui/layui.js"></script>
 <script type="text/javascript" src="../../js/common.js"></script>
-<script type="text/javascript" src="../../js/role.js"></script>
+<script type="text/javascript" src="../../js/user.js"></script>
 </body>
 </html>

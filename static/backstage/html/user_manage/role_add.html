@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>个人信息</title>
+	<link rel="Shortcut Icon" href="/favicon.ico" />
+	<!-- load css -->
+	<link rel="stylesheet" type="text/css" href="/static/common/frame/layui/css/layui.css" media="all">
+    <link rel="stylesheet" type="text/css" href="/static/common/css/gobal.css" media="all">
+    <link rel="stylesheet" type="text/css" href="/static/common/css/animate.css" media="all">
+    <link rel="stylesheet" type="text/css" href="/static/backstage/css/common.css" media="all">
+    <link rel="stylesheet" type="text/css" href="/static/backstage/css/mypanel.css" media="all">
+</head>
+</head>
+<body>
+<div class="larry-fluid larry-wrapper">
+    <div class="layui-row lay-col-space20">
+    	<div class="layui-cos-xs12 layui-col-sm12 layui-col-md12 layui-col-lg12">
+    		<section class="larry-body animated fadeInRightBig">
+    			<div class="larry-body-header">
+    				<span class="tit">添加角色</span>
+    			</div>
+    			<div class="larry-body-content clearfix">
+    				<form class="layui-form">
+				        <div class="layui-form-item">
+					        <label class="layui-form-label">角色名称</label>
+					        <div class="layui-input-block">  
+						        <input type="text" name="role_name"  autocomplete="off"  class="layui-input" value="" lay-verify="required" placeholder="角色名称">
+					        </div>
+				        </div>
+				
+				<div class="layui-form-item">
+					<div class="layui-input-block">
+						<button class="layui-btn" lay-submit="" lay-filter="submit">立即提交</button>
+						<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+					</div>
+				</div>
+			</form>
+    			</div>
+    		</section>
+    	</div>
+    </div>
+</div>
+<!-- 加载js文件 -->
+<script type="text/javascript" src="/static/common/frame/layui/layui.js" ></script>
+<script type="text/javascript" src="/static/backstage/js/common.js" ></script>
+<script type="text/javascript" src="/static/backstage/js/role_add.js"></script>
+</body>
+</html>

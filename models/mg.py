@@ -26,9 +26,9 @@ class OperationRecord(Base):
     ### 操作记录
     id = Column('id', Integer, primary_key=True, autoincrement=True)
     username = Column('username', String(50))
-    user_role = Column('user_role', String(50))
-    opt_type = Column('opt_type', String(10))
-    record = Column('record', String(200))
+    nickname = Column('nickname', String(50))
+    method = Column('method', String(10))
+    uri = Column('uri', String(150))
     ctime = Column('ctime', DateTime(), default=datetime.now, onupdate=datetime.now)
 
 
@@ -59,7 +59,7 @@ class Roles(Base):
     role_id = Column('role_id', Integer, primary_key=True, autoincrement=True)
     role_name = Column('role_name', String(30))
     status = Column('status', String(5), default='0')
-    ctime = Column('ctime', DateTime(), default=datetime.now)
+    ctime = Column('ctime', DateTime(), default=datetime.now,onupdate=datetime.now)
 
 
 class UserRoles(Base):

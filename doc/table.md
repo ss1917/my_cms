@@ -10,9 +10,9 @@ status = '20'   禁用
 CREATE TABLE `operation_record` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(50) NOT NULL,
-  `user_role` varchar(50),
-  `opt_type` varchar(10) NOT NULL,
-  `record` varchar(200) NOT NULL,
+  `nickname` varchar(50),
+  `method` varchar(10) NOT NULL,
+  `uri` varchar(150) NOT NULL,
   `ctime` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
