@@ -97,14 +97,14 @@ insert into role_functions value(2,'2','2','0','','');
   `mark` varchar(5) NOT NULL,
   `memo` varchar(10) NOT NULL,
   `creator` varchar(50) NOT NULL,
-  `approver` varchar(50) NOT NULL,
+  `executor` varchar(50) NOT NULL,
   `status` varchar(5) NOT NULL,
   `schedule` varchar(50) NOT NULL,
   `temp_id` varchar(12) NOT NULL,
   `ctime` datetime DEFAULT NULL,
   `stime` datetime DEFAULT NULL,
   PRIMARY KEY (`list_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 ##### 任务日志表
 
@@ -117,7 +117,7 @@ CREATE TABLE `task_log` (
   `task_log` varchar(250) NOT NULL,
   `log_time` datetime DEFAULT NULL,
   PRIMARY KEY (`log_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8;
 
 ##### 任务调度表
 
@@ -135,7 +135,7 @@ CREATE TABLE `task_sched` (
   `exec_ip` char(15) NOT NULL,
   `task_status` varchar(5) NOT NULL,
   PRIMARY KEY (`sched_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 
 ##### 命令表
 

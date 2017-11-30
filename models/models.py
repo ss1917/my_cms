@@ -25,21 +25,21 @@ class TaskList(Base):
 
     ### 任务详情表
     list_id = Column('list_id', Integer, primary_key=True, autoincrement=True)
-    task_name = Column('task_name', String(50))
-    task_type = Column('task_type', String(50))
-    hosts = Column('hosts', Text())
-    args = Column('args', Text())
-    details = Column('details', Text())
-    descript = Column('descript', Text())
-    mark = Column('mark', String(10))
-    memo = Column('memo', String(10))
-    creator = Column('creator', String(50))
-    approver = Column('approver', String(50))
-    status = Column('status', String(5))
-    schedule = Column('schedule', String(50))
-    temp_id = Column('temp_id', String(12))
-    ctime = Column('ctime', DateTime(), default=datetime.now)
-    stime = Column('stime', DateTime())
+    task_name = Column('task_name', String(50))   ### 任务名称
+    task_type = Column('task_type', String(50))   ### 任务类型
+    hosts = Column('hosts', Text())            ### 主机地址
+    args = Column('args', Text())              ### 参数
+    details = Column('details', Text())        ### 详情
+    descript = Column('descript', Text())      ### 描述
+    mark = Column('mark', String(10))          ### 标记
+    memo = Column('memo', String(10))          ### 备注
+    creator = Column('creator', String(50))    ### 创建者
+    executor = Column('executor', String(50))  ### 执行者
+    status = Column('status', String(5))       ### 任务状态
+    schedule = Column('schedule', String(50))  ### 进度
+    temp_id = Column('temp_id', String(12))    ### 模板ID
+    ctime = Column('ctime', DateTime(), default=datetime.now, onupdate=datetime.now) ### 创建时间
+    stime = Column('stime', DateTime())  ### 执行时间
 
 
 class TaskSched(Base):

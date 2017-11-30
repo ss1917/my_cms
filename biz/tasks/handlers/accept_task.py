@@ -27,9 +27,9 @@ def new_task(list_id, temp_id, *group_list):
                 for i in gip:
                     for t in temp_info:
                         session.add(
-                            TaskSched(list_id=list_id, task_group=g, task_level=t.level, task_name=t.cmd_name, task_cmd=t.command,
-                                      task_args=t.args, trigger=t.trigger, exec_user=t.exec_user, forc_ip=t.forc_ip, exec_ip=i,
-                                      task_status='1'))
+                            TaskSched(list_id=list_id, task_group=g, task_level=t.level, task_name=t.cmd_name,
+                                      task_cmd=t.command, task_args=t.args, trigger=t.trigger, exec_user=t.exec_user,
+                                      forc_ip=t.forc_ip, exec_ip=i, task_status='1'))
 
         session.commit()
         return 0
@@ -41,16 +41,16 @@ class AcceptTaskHandler(BaseHandler):
         self.write(greeting + ', friendly user!')
 
     def post(self, *args, **kwargs):
-        data = json.loads(self.request.body)
+        data = json.loads(self.request.body.decode("utf-8"))
         ### 首先判断参数是否完整（temp_id，hosts，submitter）必填
         exec_time = data.get('exec_time', '2038-10-25 14:00:00')
         temp_id = str(data.get('temp_id', ''))
         task_type = data.get('task_type', '其他')
         submitter = data.get('submitter', '')  ### 应根据登录的用户
-        approver = data.get('approver', '')  ### 审批人可以为空
-        args = data.get('args', '')          ### 参数，可以为空
-        hosts = data.get('hosts', '')        ### 执行主机，不能为空
-        details = data.get('details', '')    ### 任务描述
+        executor = data.get('executor', '')  ### 审批人可以为空
+        args = data.get('args', '')  ### 参数，可以为空
+        hosts = data.get('hosts', '')  ### 执行主机，不能为空
+        details = data.get('details', '')  ### 任务描述
         if hosts == '' or temp_id == '':
             json_data = {
                 'status': '2',
@@ -75,8 +75,9 @@ class AcceptTaskHandler(BaseHandler):
         if set(group_list).issubset(set(hosts.keys())) and 'main' in hosts.keys():
             with DBContext('default') as session:
                 temp_name = session.query(TempList.temp_name).filter(TempList.temp_id == temp_id).one()
-                new_list = TaskList(task_name=temp_name[0], task_type=task_type, hosts=str(hosts_dic), args=args, details=details,
-                                    descript='', mark='', memo='', creator=submitter, approver=approver, status='0',
+                new_list = TaskList(task_name=temp_name[0], task_type=task_type, hosts=str(hosts_dic), args=args,
+                                    details=details,
+                                    descript='', mark='', memo='', creator=submitter, executor=executor, status='0',
                                     schedule='new', temp_id=temp_id, stime=exec_time)
             session.add(new_list)
             session.commit()
@@ -98,6 +99,7 @@ class AcceptTaskHandler(BaseHandler):
                 "msg": "主机分组和模板分组不匹配"
             }
             self.write(json_data)
+
 
 accept_task_urls = [
     (r"/v1/accept_task/", AcceptTaskHandler),

@@ -24,7 +24,6 @@ class UserHandler(BaseHandler):
         limit = self.get_argument('limit', default=10, strip=True)
         username = self.get_argument('username', default=None, strip=True)
         limit_start = (int(page_size) - 1) * int(limit)
-        print(limit_start)
         user_list = []
         with DBContext('readonly') as session:
             count = session.query(Users).filter(Users.status != '10').count()

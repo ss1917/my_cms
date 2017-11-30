@@ -1,17 +1,21 @@
 #!/usr/bin/env python
 # -*-coding:utf-8-*-
-
+'''
+Author : SS
+date   : 2017-10-11 12:48:43
+role   : task center
+'''
 from libs.application import Application as myapplication
-from biz.tasks.handlers.accept_task import accept_task_urls
-from biz.tasks.handlers.task_handler import task_list_urls
+from biz.mg.handlers.logs_handler import log_urls
+
+
 
 class Application(myapplication):
     def __init__(self, **settings):
         urls = []
-
-        urls.extend(accept_task_urls)
-        urls.extend(task_list_urls)
+        urls.extend(log_urls)
         super(Application, self).__init__(urls, **settings)
+
 
 if __name__ == '__main__':
     pass

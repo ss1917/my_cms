@@ -12,17 +12,19 @@ from libs.program import MainProgram
 from settings import settings as app_settings
 from biz.tasks.program import Application as DealApp
 from biz.tasks.applications import Application as AcceptApp
-from biz.mg_api.applications import Application as MgApp
-
+from biz.mg.applications import Application as MgApp
+from biz.publish_code.applications import Application as PublishApp
 
 define("service", default='control_api', help="start service flag", type=str)
 class MyProgram(MainProgram):
     def __init__(self, service='control_api', progressid=''):
         self.__app = None
         settings = app_settings
-        if service == 'mg_api':
+        if service == 'mg':
             self.__app = MgApp(**settings)
-        if service == 'accept_api':
+        if service == 'publish':
+            self.__app = PublishApp(**settings)
+        if service == 'acceptance':
             self.__app = AcceptApp(**settings)
         elif service == 'exec_task':
             self.__app = DealApp(**settings)

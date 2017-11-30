@@ -47,6 +47,7 @@ layui.use(['jquery','common','layer','form','larryMenu'],function(){
 
     form.on('submit(submit)',function(data){
         console.log(data.form);
+        $(data.elem).addClass('layui-btn-disabled').attr('disabled','disabled');
         $.ajax({
             url: "/login/",
             type: 'POST',

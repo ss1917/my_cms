@@ -174,50 +174,22 @@
 	}, {
 		"id": "6",
 		"pid": "0",
-		"title": "网站管理",
+		"title": "发布管理",
 		"icon": "&#xea0e;",
 		"url": "",
 		"spread": true,
 		"children": [{
-			"id": "7",
-			"pid": "0",
-			"title": "网站栏目管理",
-			"icon": "&#xe8c1;",
-			"url": "html/temp.html",
-			"spread": false
-		}, {
 			"id": "8",
 			"pid": "0",
-			"title": "所有档案列表",
+			"title": "我的发布",
 			"icon": "&#xe869;",
-			"url": "html/content/article_list.html",
-			"spread": false
-		}, {
-			"id": "9",
-			"pid": "0",
-			"title": "待审核的档案",
-			"icon": "&#xe82d;",
-			"url": "html/temp.html",
+			"url": "/static/backstage/templates/publish_code/task_list.html",
 			"spread": false
 		}, {
 			"id": "10",
 			"pid": "0",
-			"title": "我发布的文档",
+			"title": "创建发布",
 			"icon": "&#xe905;",
-			"url": "html/temp.html",
-			"spread": false
-		}, {
-			"id": "10",
-			"pid": "0",
-			"title": "Tags管理",
-			"icon": "&#xe897;",
-			"url": "html/temp.html",
-			"spread": false
-		}, {
-			"id": "10",
-			"pid": "0",
-			"title": "内容回收站",
-			"icon": "&#xe84e;",
 			"url": "html/temp.html",
 			"spread": false
 		}]
