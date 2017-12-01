@@ -10,8 +10,9 @@ role   : 任务管理API
 import json
 from libs.bash_handler import BaseHandler
 from libs.db_context import DBContext
-from models.models import TaskList, model_to_dict
+from models.models import TaskList, TaskSched, model_to_dict
 from libs.auth_login import auth_login_redirect
+
 
 class TaskListHandler(BaseHandler):
     @auth_login_redirect
@@ -40,9 +41,37 @@ class TaskListHandler(BaseHandler):
         self.write(kwargs)
 
 
+class TaskSchedHandler(BaseHandler):
+    @auth_login_redirect
+    def get(self, *args, **kwargs):
+        list_id = self.get_argument('list_id', default=1, strip=True)
+        group_list = []
+        task_list = []
+        with DBContext('readonly') as session:
+            all_group = session.query(TaskSched.task_group).filter(TaskSched.list_id == list_id).group_by(
+                TaskSched.task_group).all()
+            task_info = session.query(TaskList).filter(TaskList.list_id == list_id)
+
+        for msg in task_info:
+            data_dict = model_to_dict(msg)
+            task_list.append(data_dict)
+
+        for g in all_group:
+            group_list.append(g[0])
+
+        kwargs = {
+            "group_count": len(group_list),
+            "group_list": group_list,
+            "code": 0,
+            "msg": '获取成功'
+        }
+        print(kwargs)
+        self.write(kwargs)
+
 
 task_list_urls = [
     (r"/v1/task/list/", TaskListHandler),
+    (r"/v1/task/sched/", TaskSchedHandler),
 ]
 
 if __name__ == "__main__":

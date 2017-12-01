@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>项目列表</title>
+    <link rel="Shortcut Icon" href="/favicon.ico"/>
+    <!-- load css -->
+    <link rel="stylesheet" type="text/css" href="../../../common/frame/layui/css/layui.css" media="all">
+    <link rel="stylesheet" type="text/css" href="../../../common/css/gobal.css" media="all">
+    <link rel="stylesheet" type="text/css" href="../../../common/css/animate.css" media="all">
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" media="all">
+</head>
+</head>
+<body>
+<div class="layui-fluid larry-wrapper">
+    <div class="layui-row  animated bounceIn">
+        <div class="layui-col-lg12 layui-col-md12 layui-col-sm12 layui-col-xs12">
+            <fieldset class="layui-elem-field layui-field-title site-title">
+                <legend><a name="color-design">任务信息</a></legend>
+            </fieldset>
+
+
+            <fieldset class="layui-elem-field layui-field-title site-title">
+                <legend><a name="color-design">任务详情</a></legend>
+            </fieldset>
+
+        </div>
+        <div id="view"></div>
+        <fieldset class="layui-elem-field">
+            <table id="tasklistTables" lay-filter="tasklistTables"></table>
+        </fieldset>
+
+    </div>
+</div>
+</div>
+<!-- 加载js文件 -->
+<script type="text/html" id="publishbar">
+    <a class="layui-btn layui-btn-warm layui-btn-mini" lay-event="chongzuo">重做</a>
+    <a class="layui-btn layui-btn-danger layui-btn-mini" lay-event="zhongzhi">终止</a>
+</script>
+<script id="demo" type="text/html">
+    {{# layui.each(d.list, function(index, item){ }}
+    <fieldset class="layui-elem-field">
+        <legend>执行组{{item.group}}</legend>
+        <div class="layui-field-box">
+            {{# layui.each(item.hosts, function(ind,litem){ }}
+            <button class="layui-btn layui-btn-xs layui-btn-danger layui-btn-radius" name={{ litem }} type="submit"
+                    value="" title="{{ item.alias }}" data-type="search">{{ litem }}
+            </button>
+            {{# }); }}
+        </div>
+    </fieldset>
+    {{# }); }}
+</script>
+<script type="text/html" id="statusTpl">
+    {{#  if(d.task_status == "0" ){ }}
+    <span style="">新建</span>
+    {{# } else if(d.task_status == "1" )  { }}
+    <span class="layui-badge layui-bg-cyan">等待</span>
+    {{# } else if(d.task_status == "2" )  { }}
+    <span class="layui-badge layui-bg-blue">运行</span>
+    {{# } else if(d.task_status == "3" )  { }}
+    <span class="layui-badge layui-bg-green">完成</span>
+    {{# } else if(d.task_status == "4" )  { }}
+    <span class="layui-badge layui-bg-orange">错误</span>
+    {{# } else if(d.task_status == "5" )  { }}
+    <span class="layui-badge layui-bg-gray">手动</span>
+    {{# } else { }}
+    <span class="layui-badge">{{d.task_status}}</span>
+    {{#  } }}
+</script>
+<script type="text/javascript" src="../../../common/frame/layui/layui.js"></script>
+<script type="text/javascript" src="../../js/common.js"></script>
+<script type="text/javascript" src="../../js/task_details.js"></script>
+</body>
+</html>

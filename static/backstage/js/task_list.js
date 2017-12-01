@@ -71,20 +71,20 @@ layui.use(['layer', 'form', 'table', 'common', 'element',], function () {
         limit: 30,
     });
 
-    /*
+
     $("[name=publishTables]").click(function () {
         table.reload("publishTables");
     });
-    $("[name=userTables]").click(function () {
-        table.reload("userTables");
+    $("[name=histTables]").click(function () {
+        table.reload("histTables");
     });
-    */
+
 
     //监听工具条
-    table.on('tool(userTables)', function (obj) {
+    table.on('tool(tasklistTables)', function (obj) {
         var data = obj.data;
         //console.log(data);
-        if (obj.event === 'edit') {
+        if (obj.event === 'check1') {
             layer.confirm('确定要保存编辑吗？：' + data.username, function (index) {
                 $.ajax({
                     url: "/v1/accounts/user/",
@@ -110,7 +110,24 @@ layui.use(['layer', 'form', 'table', 'common', 'element',], function () {
                 layer.close(index);
                 return false;
             });
-        } else if (obj.event === 'shouquan') {
+        } else if (obj.event === 'xiangqing') {
+            console.log(data.list_id);
+            var index = layer.open({
+                type: 2,
+                content: ['/static/backstage/templates/publish_code/task_details.html?list_id='+data.list_id],
+                area: ['320px', '195px'],
+                maxmin: true,
+                success: function (index, layero) {//回调
+                    var list_id = data.list_id
+                },
+                end: function (index) {
+                    layer.close(index);
+                },
+
+            });
+            layer.full(index);
+
+        } else if (obj.event === 'xiangqing1') {
             //layer.alert('授权行：<br>' + JSON.stringify(data))
             common.larryCmsMessage('最近好累，还是过段时间在写吧!', 'info');
 
