@@ -42,11 +42,11 @@ class AcceptTaskHandler(BaseHandler):
 
     def post(self, *args, **kwargs):
         data = json.loads(self.request.body.decode("utf-8"))
-        ### 首先判断参数是否完整（temp_id，hosts，submitter）必填
+        ### 首先判断参数是否完整（temp_id，hosts）必填
         exec_time = data.get('exec_time', '2038-10-25 14:00:00')
         temp_id = str(data.get('temp_id', ''))
         task_type = data.get('task_type', '其他')
-        submitter = data.get('submitter', '')  ### 应根据登录的用户
+        submitter = data.get('submitter', self.get_current_user())  ### 应根据登录的用户
         executor = data.get('executor', '')  ### 审批人可以为空
         args = data.get('args', '')  ### 参数，可以为空
         hosts = data.get('hosts', '')  ### 执行主机，不能为空
@@ -72,7 +72,7 @@ class AcceptTaskHandler(BaseHandler):
                 hosts_dic[g] = hosts.get(g, '')
             hosts_dic['main'] = hosts.get('main', '')
 
-        if set(group_list).issubset(set(hosts.keys())) and 'main' in hosts.keys():
+        if set(group_list).issubset(set(hosts.keys())):
             with DBContext('default') as session:
                 temp_name = session.query(TempList.temp_name).filter(TempList.temp_id == temp_id).one()
                 new_list = TaskList(task_name=temp_name[0], task_type=task_type, hosts=str(hosts_dic), args=args,
@@ -87,18 +87,9 @@ class AcceptTaskHandler(BaseHandler):
             with MessageQueueBase('task_sced', 'direct', 'the_task') as save_paper_channel:
                 save_paper_channel.publish_message(str(new_list.list_id))
 
-            json_data = {
-                "list_id": new_list.list_id,
-                "status": "0",
-                "msg": "任务建立成功"
-            }
-            self.write(json_data)
+            self.write(dict(status=0, msg="任务建立成功",list_id=new_list.list_id))
         else:
-            json_data = {
-                "status": "3",
-                "msg": "主机分组和模板分组不匹配"
-            }
-            self.write(json_data)
+            self.write(dict(status=3,msg="主机分组和模板分组不匹配"))
 
 
 accept_task_urls = [

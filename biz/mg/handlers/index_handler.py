@@ -36,20 +36,15 @@ class PasswordHandler(BaseHandler):
     @auth_login_redirect
     def get(self, *args, **kwargs):
         username = self.get_current_user()
-        greeting = self.get_argument('greeting', 'Hello')
         self.render('html/panel/password.html', username=username)
-
-    def post(self, *args, **kwargs):
-        pass
 
     @auth_login_redirect
     def patch(self, *args, **kwargs):
         data = json.loads(self.request.body.decode("utf-8"))
-        username = data.get('username', None)
         old_password = data.get('old_password', None)
         new_password1 = data.get('new_password1', None)
         new_password2 = data.get('new_password2', None)
-        print(username,old_password,new_password1)
+        username = self.get_current_user()
         if not old_password or not new_password1 or not new_password2 or not username:
             self.write(dict(status=-1, msg='不能有空值'))
             return

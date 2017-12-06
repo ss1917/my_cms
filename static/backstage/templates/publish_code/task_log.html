@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>个人信息</title>
+    <link rel="Shortcut Icon" href="/favicon.ico"/>
+    <!-- load css -->
+    <link rel="stylesheet" type="text/css" href="../../../common/frame/layui/css/layui.css" media="all">
+    <link rel="stylesheet" type="text/css" href="../../../common/css/gobal.css" media="all">
+    <link rel="stylesheet" type="text/css" href="../../../common/css/animate.css" media="all">
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" media="all">
+</head>
+</head>
+<body>
+<div class="layui-fluid larry-wrapper">
+    <div class="layui-row  animated bounceIn">
+        <div class="layui-col-lg12 layui-col-md12 layui-col-sm12 layui-col-xs12">
+            <fieldset class="layui-elem-field">
+                <div id="view"></div>
+            </fieldset>
+        </div>
+    </div>
+</div>
+<!-- 加载js文件 -->
+<script id="log" type="text/html">
+    <ul>
+        {{# layui.each(d.data, function(index, item){ }}
+        <li>
+            <span>{{ item.log_time }} : &nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <span>       </span>
+            <span>{{ item.task_log }}</span>
+        </li>
+        {{# }); }}
+    </ul>
+</script>
+<script type="text/javascript" src="../../../common/frame/layui/layui.js"></script>
+<script type="text/javascript" src="../../js/common.js"></script>
+<script type="text/javascript" src="../../js/task_log.js"></script>
+</body>
+</html>

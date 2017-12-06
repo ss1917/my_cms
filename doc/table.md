@@ -176,6 +176,7 @@ CREATE TABLE `task_sched` (
   `args` varchar(128) NOT NULL,
   `trigger` varchar(10) NOT NULL,
   `exec_user` varchar(20) NOT NULL,
+  `exec_ip` char(15) NOT NULL,
   `forc_ip` char(15) NOT NULL,
   `creator` varchar(30) NOT NULL,
   `utime` datetime DEFAULT NULL,

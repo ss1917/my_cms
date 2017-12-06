@@ -6,7 +6,6 @@ layui.use(['layer', 'form', 'table', 'common'], function () {
         laytpl = layui.laytpl,
         common = layui.common;
 
-    //table.init('filter', options);
     //取url里面的参数
     $(function () {
         (function ($) {
@@ -21,14 +20,16 @@ layui.use(['layer', 'form', 'table', 'common'], function () {
 
     var list_id = $.getUrlParam('list_id');
 
+    var data_init = null;
     $(function () {
         $.ajax({
             url: '/v1/task/sched/?list_id=' + list_id,
+            async: false,
             success: function (data) {
                 if (data.code == 0) {
                     layer.msg(data.msg, {icon: 1, time: 1000});
                     layer.closeAll('page');
-                    all_data = JSON.stringify(data)
+                    data_init = data;
                     setTimeout(function () {
                     }, 1000);
                 } else {
@@ -42,24 +43,21 @@ layui.use(['layer', 'form', 'table', 'common'], function () {
         return false;
     });
 
-
-
-
-    var data = { //数据
-        "title": "Layui常用模块",
-        "list": [{"group": "1", "alias": "layer","hosts":['1','2']}, {"group": "2", "alias": "form","hosts":['1']}]
-    }
-    var getTpl = demo.innerHTML,
+    var getTpl = task.innerHTML,
         view = document.getElementById('view');
-    laytpl(getTpl).render(data, function (html) {
+    laytpl(getTpl).render(data_init, function (html) {
         view.innerHTML = html;
     });
 
     var tableIns = table.render({
-        elem: '#tasklistTables',
+        elem: '#taskdetailsTables',
         cols: [
             [{
                 field: '', width: 60, title: '', sort: true,
+            }, {
+                field: 'exec_ip', width: 120, title: '执行主机', align: 'center',
+            }, {
+                field: 'task_group', width: 80, title: '执行组', align: 'center',
             }, {
                 field: 'task_level', width: 80, title: '优先级', align: 'center',
             }, {
@@ -67,19 +65,20 @@ layui.use(['layer', 'form', 'table', 'common'], function () {
             }, {
                 field: 'task_cmd', width: 200, title: '任务命令', align: 'center',
             }, {
-                field: 'task_status', width: 80, title: '状态', align: 'center', templet: '#statusTpl', unresize: true,
+                field: 'task_status', width: 100, title: '状态', align: 'center', templet: '#statusTpl', unresize: true,
             }, {
-                title: '操作', width: 180, align: 'center', toolbar: '#publishbar', fixed: "right"
+                title: '操作', width: 220, align: 'center', toolbar: '#publishbar', fixed: "right"
             }]
         ],
         url: '/v1/task/sched/?list_id=' + list_id,
         even: true,
-        id: 'tasklistTables',
+        page: false,
+        id: 'taskdetailsTables',
     });
 
 
     //监听表格复选框选择
-    table.on('checkbox(userTables)', function (obj) {
+    table.on('checkbox(taskdetailsTables)', function (obj) {
         console.log(obj)
     });
 
@@ -112,14 +111,18 @@ layui.use(['layer', 'form', 'table', 'common'], function () {
     });
 
     //监听工具条
-    table.on('tool(tasklistTables)', function (obj) {
+    table.on('tool(taskdetailsTables)', function (obj) {
         var data = obj.data;
-        if (obj.event === 'edit') {
-            layer.confirm('确定要保存编辑吗？：' + data.username, function (index) {
+        if (obj.event === 'hand') {
+            layer.confirm('确定要手动执行吗？？？', function (index) {
                 $.ajax({
-                    url: "/v1/accounts/user/",
+                    url: "/v1/task/sched/",
                     type: 'PUT',
-                    data: JSON.stringify(data),
+                    data: JSON.stringify({
+                        "list_id": list_id,
+                        "sched_id": data.sched_id,
+                        "task_handle": "hand"
+                    }),
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (data) {
@@ -127,7 +130,6 @@ layui.use(['layer', 'form', 'table', 'common'], function () {
                             layer.msg(data.msg, {icon: 1, time: 1000});
                             layer.closeAll('page');
                             setTimeout(function () {
-                                //window.location.href = '/';
                             }, 1000);
                         } else {
                             layer.msg(data.msg, {icon: 2, time: 1000});
@@ -140,18 +142,16 @@ layui.use(['layer', 'form', 'table', 'common'], function () {
                 layer.close(index);
                 return false;
             });
-        } else if (obj.event === 'shouquan') {
-            //layer.alert('授权行：<br>' + JSON.stringify(data))
-            common.larryCmsMessage('最近好累，还是过段时间在写吧!', 'info');
-
-        } else if (obj.event === 'del') {
-            layer.confirm('删除行?', function (index) {
-                var IdArr = [];
-                IdArr.push(data.user_id);
+        } else if (obj.event === 'redo') {
+            layer.confirm('重做？？？', function (index) {
                 $.ajax({
-                    url: "/v1/accounts/user/",
-                    type: 'DELETE',
-                    data: JSON.stringify({"user_id": IdArr}),
+                    url: "/v1/task/sched/",
+                    type: 'PUT',
+                    data: JSON.stringify({
+                        "list_id": list_id,
+                        "sched_id": data.sched_id,
+                        "task_handle": "redo"
+                    }),
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (data) {
@@ -159,7 +159,53 @@ layui.use(['layer', 'form', 'table', 'common'], function () {
                             layer.msg(data.msg, {icon: 1, time: 1000});
                             layer.closeAll('page');
                             setTimeout(function () {
-                                obj.del();
+                                table.reload('taskdetailsTables', {
+                                    page: {
+                                        curr: 1 //重新从第 1 页开始
+                                    }
+                                    , where: {
+                                        task_group: data.task_group,
+                                        exec_ip: data.exec_ip
+                                    }
+                                });
+                            }, 1000);
+                        } else {
+                            layer.msg(data.msg, {icon: 2, time: 1000});
+                        }
+                    },
+                    error: function (data) {
+                        layer.msg('失败', {icon: 2, time: 1000});
+                    },
+                });
+                layer.close(index);
+            });
+        } else if (obj.event === 'task_log') {
+            console.log(data.list_id, data.exec_ip, data.task_group, data.task_level)
+            var index = layer.open({
+                type: 2,
+                content: '/static/backstage/templates/publish_code/task_log.html?list_id=' + data.list_id + '&exec_ip=' + data.exec_ip+'&task_group='+data.task_group+'&task_level='+data.task_level,
+                area: ['320px', '195px'],
+                maxmin: true
+            });
+            layer.full(index);
+
+        } else if (obj.event === 'stop') {
+            layer.confirm('终止当前组任务？？？', function (index) {
+                $.ajax({
+                    url: "/v1/task/sched/",
+                    type: 'PUT',
+                    data: JSON.stringify({
+                        "list_id": list_id,
+                        "sched_id": data.sched_id,
+                        "task_handle": "stop"
+                    }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.status == 0) {
+                            layer.msg(data.msg, {icon: 1, time: 1000});
+                            layer.closeAll('page');
+                            setTimeout(function () {
                             }, 1000);
                         } else {
                             layer.msg(data.msg, {icon: 2, time: 1000});
@@ -191,20 +237,23 @@ layui.use(['layer', 'form', 'table', 'common'], function () {
             layer.full(index);
         },
         search: function () {
-            var user_search = $('#user_search');
-            console.log(user_search, user_search.val())
+            var input_value = [];
+            $(this).siblings().each(function (index, item) {
+                input_value.push($(item).val());
+            });
+
+            var group_search = input_value[0];
+            var hosts_search = input_value[1];
             //执行重载
-            table.reload('userTables', {
+            table.reload('taskdetailsTables', {
                 page: {
                     curr: 1 //重新从第 1 页开始
                 }
                 , where: {
-                    username: user_search.val()
+                    task_group: group_search,
+                    exec_ip: hosts_search,
                 }
             });
-        },
-        edit: function () {
-            common.larryCmsMessage('最近好累，还是过段时间在写吧！,直接行内编辑吧', 'info');
         },
         del: function () {
             var checkStatus = table.checkStatus('userTables'),

@@ -13,8 +13,10 @@ from ast import literal_eval
 import time, re
 import paramiko
 
+sys.path.append("../../")
 from models.models import TaskList, TaskSched, TaskLog
 from libs.db_context import DBContext
+
 
 class MyExecute():
     def __init__(self, flow_id, group_id):
@@ -23,7 +25,7 @@ class MyExecute():
         with DBContext('readonly') as session:
             taskinfo = session.query(TaskList.hosts, TaskList.args).filter(TaskList.list_id == self.flow_id).one()
 
-        self.all_exec_ip = literal_eval(taskinfo[0]).get(self.group_id,'')
+        self.all_exec_ip = literal_eval(taskinfo[0]).get(self.group_id, '')
         print(self.all_exec_ip)
         self.all_args_info = literal_eval(taskinfo[1])
 
@@ -50,9 +52,28 @@ class MyExecute():
                 return '4'
         return '3'
 
-    ### 执行定时任务，修改任务可执行状态
-    def exec_start(self):
-        pass
+    ### 变更订单状态
+    def change_list(self):
+        status_list = []
+        with DBContext('readonly') as session:
+            status = session.query(TaskSched.task_status).filter(TaskSched.list_id == self.flow_id).all()
+        for s in status:
+            status_list.append(s[0])
+        if '0' in status_list:
+            status = '0'
+        if '1' in status_list:
+            status = '1'
+        if '2' in status_list:
+            status = '2'
+        if '5' in status_list and '1' not in status_list and '2' not in status_list:
+            status = '5'
+        if '4' in status_list:
+            status = '4'
+        if '3' in status_list and len(list(set(status_list))) == 1:
+            status = '3'
+        with DBContext('default') as session:
+            session.query(TaskList).filter(TaskList.list_id == self.flow_id).update({TaskList.status: status})
+            session.commit()
 
     ### 解析参数
     def resolve_args(self, args):
@@ -82,7 +103,7 @@ class MyExecute():
             real_ip = info.get('forc_ip', '127.0.0.1')
         else:
             real_ip = info.get('exec_ip', '127.0.0.1')
-        myssh.connect(hostname=real_ip, username=info.get('exec_user', 'root'), port=info.get('exec_port', 22))
+
         ### 修改状态为运行中
         with DBContext('default') as session:
             session.query(TaskSched).filter(TaskSched.list_id == self.flow_id, TaskSched.task_group == self.group_id,
@@ -90,8 +111,14 @@ class MyExecute():
                                             TaskSched.exec_ip == info['exec_ip']).update({TaskSched.task_status: '2'})
             session.commit()
 
-        stdin, stdout, stderr = myssh.exec_command(mycmd)
-        status = stdout.channel.recv_exit_status()
+        try:
+            myssh.connect(hostname=real_ip, username=info.get('exec_user', 'root'), port=info.get('exec_port', 22),
+                          timeout=300)
+            stdin, stdout, stderr = myssh.exec_command(mycmd, bufsize=-1, timeout=5)
+            status = stdout.channel.recv_exit_status()
+        except Exception as e:
+            status = -1
+            stderr = str(e)
 
         if status == 0:
             real_status = '3'
@@ -104,19 +131,27 @@ class MyExecute():
         with DBContext('default') as session:
             session.query(TaskSched).filter(TaskSched.list_id == self.flow_id, TaskSched.task_group == self.group_id,
                                             TaskSched.task_level == info['task_level'],
-                                            TaskSched.exec_ip == info['exec_ip']).update({TaskSched.task_status: real_status})
+                                            TaskSched.exec_ip == info['exec_ip']).update(
+                {TaskSched.task_status: real_status})
             session.commit()
 
         ### 记录日志
-        with DBContext('default') as session:
-            for i in real_stdout.readlines():
-                i = i.replace('\n', '')
-                if i:
-                    session.add(TaskLog(list_id=self.flow_id, task_group=self.group_id, task_level=info['task_level'],
-                                        exec_ip=info['exec_ip'], task_log=i))
+        if status == -1:
+            with DBContext('default') as session:
+                session.add(TaskLog(list_id=self.flow_id, task_group=self.group_id, task_level=info['task_level'],
+                                    exec_ip=info['exec_ip'], task_log=real_stdout))
+                session.commit()
+        else:
+            with DBContext('default') as session:
+                for i in real_stdout.readlines():
+                    i = i.replace('\n', '')
+                    if i:
+                        session.add(
+                            TaskLog(list_id=self.flow_id, task_group=self.group_id, task_level=info['task_level'],
+                                    exec_ip=info['exec_ip'], task_log=i))
 
-            session.commit()
-            time.sleep(1)
+                session.commit()
+                time.sleep(1)
         return real_status
 
     ### 任务调度函数
@@ -127,9 +162,9 @@ class MyExecute():
             ### 挂起的任务设置休眠时间
             print('list-{0} gourp-{1} perform sleep after {2} seconds'.format(self.flow_id, self.group_id, int_sleep))
             time.sleep(int_sleep)
-            int_sleep += 1
-            if int_sleep > 30:
-                int_sleep = 30
+            int_sleep += 2
+            if int_sleep > 20:
+                int_sleep = 20
 
             ### 检查订单状态
             if self.check_group('all') == '3':
@@ -152,9 +187,9 @@ class MyExecute():
 
                 for i in level_list:
                     cmd_info = session.query(TaskSched).filter(TaskSched.list_id == self.flow_id,
-                                                                   TaskSched.task_group
-                                                                   == self.group_id, TaskSched.task_level == i,
-                                                                   TaskSched.exec_ip == ip).all()
+                                                               TaskSched.task_group
+                                                               == self.group_id, TaskSched.task_level == i,
+                                                               TaskSched.exec_ip == ip).all()
                     session.commit()
 
                     for c in cmd_info:
@@ -177,13 +212,16 @@ class MyExecute():
                     if level_status.get(i, '') == '1' and ('4' not in level_status.values()):
                         print('list-{0} {1} group-{2} level-{3} start'.format(self.flow_id, ip, self.group_id, i))
                         self.exec_task(**exec_info)
+                        self.change_list()
+                        int_sleep = 0
                         break
 
     ### 根据执行主机，并发执行任务调度
     def exec_thread(self):
         threads = []
         #####取所有IP###
-        for ip in self.all_exec_ip:
+        ### ip以字符串格式传入以,分割
+        for ip in self.all_exec_ip.split(','):
             ip = ip.replace('\n', '').strip()
 
             ###并发调用execute函数
@@ -191,7 +229,8 @@ class MyExecute():
             if ip_have:
                 threads.append(multiprocessing.Process(target=self.exec_main, args=(ip,)))
 
-        print("current has {0} threads executive task list-{1} group-{2}" .format(len(threads),self.flow_id, self.group_id))
+        print("current has {0} threads executive task list-{1} group-{2}".format(len(threads), self.flow_id,
+                                                                                 self.group_id))
 
         ###开始多线程
         for start_t in threads:
@@ -207,6 +246,7 @@ class MyExecute():
 def run(flow_id, group_id):
     ME = MyExecute(flow_id, group_id)
     ME.exec_thread()
+
 
 if __name__ == "__main__":
     fire.Fire(run)

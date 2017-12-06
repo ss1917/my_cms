@@ -18,16 +18,27 @@
             <fieldset class="layui-elem-field layui-field-title site-title">
                 <legend><a name="color-design">任务信息</a></legend>
             </fieldset>
-
+            <div class="layui-collapse" lay-accordion>
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title">任务参数</h2>
+                    <div class="layui-colla-content">内容区域</div>
+                </div>
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title">注意事项</h2>
+                    <div class="layui-colla-content">内容区域</div>
+                </div>
+            </div>
 
             <fieldset class="layui-elem-field layui-field-title site-title">
                 <legend><a name="color-design">任务详情</a></legend>
             </fieldset>
 
         </div>
-        <div id="view"></div>
+        <div class="" id="larry_group">
+            <div id="view"></div>
+        </div>
         <fieldset class="layui-elem-field">
-            <table id="tasklistTables" lay-filter="tasklistTables"></table>
+            <table id="taskdetailsTables" lay-filter="taskdetailsTables"></table>
         </fieldset>
 
     </div>
@@ -35,18 +46,48 @@
 </div>
 <!-- 加载js文件 -->
 <script type="text/html" id="publishbar">
-    <a class="layui-btn layui-btn-warm layui-btn-mini" lay-event="chongzuo">重做</a>
-    <a class="layui-btn layui-btn-danger layui-btn-mini" lay-event="zhongzhi">终止</a>
+    <a class="layui-btn layui-btn-normal layui-btn-mini" lay-event="task_log">日志</a>
+    {{#  if(d.task_status == "5" ){ }}
+    <a class="layui-btn layui-btn-mini" lay-event="hand">手动执行</a>
+    {{#  } }}
+    <a class="layui-btn layui-btn-warm layui-btn-mini" lay-event="redo">重做</a>
+    <a class="layui-btn layui-btn-danger layui-btn-mini" lay-event="stop">终止</a>
 </script>
-<script id="demo" type="text/html">
-    {{# layui.each(d.list, function(index, item){ }}
+<script id="task" type="text/html">
+    {{# layui.each(d.group_list, function(index, item){ }}
     <fieldset class="layui-elem-field">
-        <legend>执行组{{item.group}}</legend>
+        <legend>执行组-{{item.group}}</legend>
         <div class="layui-field-box">
-            {{# layui.each(item.hosts, function(ind,litem){ }}
-            <button class="layui-btn layui-btn-xs layui-btn-danger layui-btn-radius" name={{ litem }} type="submit"
-                    value="" title="{{ item.alias }}" data-type="search">{{ litem }}
-            </button>
+            {{# layui.each(item.hosts, function(index1, item1){ }}
+            <div class="layui-inline">
+                <input class="layui-input" name="group" value="{{item.group}}" type="hidden" autocomplete="off">
+                <input class="layui-input" name="hosts" value="{{item1}}" type="hidden" autocomplete="off">
+                {{# if(item.task_status[item1] == "0" ){ }}
+                <button class="layui-btn layui-btn-mini layui-btn-primary layui-btn-radius" type="submit"
+                        title={{ item1 }} data-type="search"><i class="layui-icon">&#xe608;</i>{{ item1 }}
+                </button>
+                {{# } else if(item.task_status[item1] == "1" ) { }}
+                <button class="layui-btn layui-btn-mini layui-btn-primary layui-btn-radius" type="submit"
+                        title={{ item1 }} data-type="search"><i class="layui-icon">&#x1002;</i>{{ item1 }}
+                </button>
+                {{# } else if(item.task_status[item1] == "2" ) { }}
+                <button class="layui-btn layui-btn-mini layui-btn-normal layui-btn-radius" type="submit"
+                        title={{ item1 }} data-type="search">{{ item1 }}
+                </button>
+                {{# } else if(item.task_status[item1] == "3" ) { }}
+                <button class="layui-btn layui-btn-mini layui-btn-radius" type="submit"
+                        title={{ item1 }} data-type="search">{{ item1 }}
+                </button>
+                {{# } else if(item.task_status[item1] == "4" ) { }}
+                <button class="layui-btn layui-btn-mini layui-btn-warm layui-btn-radius" type="submit"
+                        title={{ item1 }} data-type="search">{{ item1 }}
+                </button>
+                {{# } else if(item.task_status[item1] == "5" ) { }}
+                <button class="layui-btn layui-btn-mini layui-btn-danger layui-btn-radius" type="submit"
+                        title={{ item1 }} data-type="search">{{ item1 }}
+                </button>
+                {{# } }}
+            </div>
             {{# }); }}
         </div>
     </fieldset>
@@ -56,7 +97,7 @@
     {{#  if(d.task_status == "0" ){ }}
     <span style="">新建</span>
     {{# } else if(d.task_status == "1" )  { }}
-    <span class="layui-badge layui-bg-cyan">等待</span>
+    <span class="layui-badge layui-bg-cyan">等待执行{{d.task_status}}</span>
     {{# } else if(d.task_status == "2" )  { }}
     <span class="layui-badge layui-bg-blue">运行</span>
     {{# } else if(d.task_status == "3" )  { }}
@@ -64,7 +105,7 @@
     {{# } else if(d.task_status == "4" )  { }}
     <span class="layui-badge layui-bg-orange">错误</span>
     {{# } else if(d.task_status == "5" )  { }}
-    <span class="layui-badge layui-bg-gray">手动</span>
+    <span class="layui-badge layui-bg-gray">等待手动</span>
     {{# } else { }}
     <span class="layui-badge">{{d.task_status}}</span>
     {{#  } }}

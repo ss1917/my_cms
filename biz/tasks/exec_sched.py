@@ -13,8 +13,7 @@ import multiprocessing
 from libs.logs import Logger
 from biz.tasks.exec_tasks import MyExecute
 
-sys.path.append("../../")
-from models.models import TaskList, TaskSched, TaskLog
+from models.models import TaskList, TaskSched
 from libs.db_context import DBContext
 from libs.mqhelper import MessageQueueBase
 
@@ -28,18 +27,29 @@ class DealMQ(MessageQueueBase):
                                      routing_key='the_task',
                                      queue_name='deal_task_sched')
 
-    def myrun(self, flow_id, group_id):
+    def my_run(self, flow_id, group_id):
         ME = MyExecute(flow_id, group_id)
         ME.exec_thread()
 
     def exec_list_thread(self, lid, *all_gid):
+        int_sleep = 0
+        while True:
+            time.sleep(int_sleep)
+            int_sleep += 2
+            if int_sleep > 10:
+                int_sleep = 10
+            print('新订单：' +  lid +'等待准备完成')
+            with DBContext('readonly') as session:
+                is_exist = session.query(TaskList).filter(TaskList.list_id == lid, TaskList.schedule == 'ready').first()
+            if is_exist:
+                break
+
         threads = []
         #####取所有IP###
         for i in all_gid:
             i = i[0].strip()
             if i:
-                threads.append(multiprocessing.Process(target=self.myrun, args=(lid, i,)))
-
+                threads.append(multiprocessing.Process(target=self.my_run, args=(lid, i,)))
         Logger.info("current has %d threads group execution " % len(threads))
 
         ###开始多线程
@@ -54,7 +64,6 @@ class DealMQ(MessageQueueBase):
 
     def on_message(self, body):
         time.sleep(2)
-        # args = str(body, encoding='utf-8').split('|&&|')
         try:
             args = int(body)
         except ValueError:
@@ -63,22 +72,24 @@ class DealMQ(MessageQueueBase):
         except UnboundLocalError:
             Logger.error('[*]body type error, must be int,body:(%s)' % str(body, encoding='utf-8'))
             args = 0
-        print(args)
+        print('flow_id is ', args)
         if type(args) == int:
             flow_id = args
             with DBContext('readonly') as session:
-                is_exist = session.query(TaskList.list_id).filter(TaskList.list_id == flow_id, TaskList.schedule == 'ready').all()
+                is_exist = session.query(TaskList.list_id).filter(TaskList.list_id == flow_id,
+                                                                  TaskList.schedule != 'OK').first()
             ###查询ID是否存在并且未执行
             if is_exist:
                 all_group = session.query(TaskSched.task_group).filter(TaskSched.list_id == flow_id).group_by(
                     TaskSched.task_group).all()
                 session.commit()
-                print(all_group)
+
                 ### 多进程分组执行任务
                 self.exec_list_thread(flow_id, *all_group)
                 ### 记录并修改状态
                 with DBContext('default') as session:
-                    session.query(TaskList.list_id).filter(TaskList.list_id == flow_id).update({TaskList.schedule: 'OK'})
+                    session.query(TaskList.list_id).filter(TaskList.list_id == flow_id).update(
+                        {TaskList.schedule: 'OK'})
                     session.commit()
                 Logger.error("list{0} end of task".format(flow_id))
 
