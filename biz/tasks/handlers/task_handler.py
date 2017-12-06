@@ -19,14 +19,22 @@ class TaskListHandler(BaseHandler):
     @auth_login_redirect
     def get(self, *args, **kwargs):
         page_size = self.get_argument('page', default=1, strip=True)
+        list_history = self.get_argument('history', default=None, strip=True)
         limit = self.get_argument('limit', default=10, strip=True)
         limit_start = (int(page_size) - 1) * int(limit)
         task_list = []
-        with DBContext('readonly') as session:
-            count = session.query(TaskList).filter(TaskList.schedule != 'end').count()
-            task_info = session.query(TaskList).filter(TaskList.schedule != 'end').order_by(-TaskList.stime,
-                                                                                            -TaskList.list_id).offset(
-                limit_start).limit(int(limit))
+        if list_history == 'history':
+            with DBContext('readonly') as session:
+                count = session.query(TaskList).filter(TaskList.schedule == 'OK').count()
+                task_info = session.query(TaskList).filter(TaskList.schedule == 'OK').order_by(-TaskList.stime,
+                                                                                               -TaskList.list_id).offset(
+                    limit_start).limit(int(limit))
+        else:
+            with DBContext('readonly') as session:
+                count = session.query(TaskList).filter(TaskList.schedule != 'OK').count()
+                task_info = session.query(TaskList).filter(TaskList.schedule != 'OK').order_by(-TaskList.stime,
+                                                                                               -TaskList.list_id).offset(
+                    limit_start).limit(int(limit))
 
         for msg in task_info:
             data_dict = model_to_dict(msg)
@@ -41,6 +49,22 @@ class TaskListHandler(BaseHandler):
             "msg": '获取成功'
         }
         self.write(kwargs)
+
+    @auth_login_redirect
+    def put(self, *args, **kwargs):
+        data = json.loads(self.request.body.decode("utf-8"))
+        list_id = data.get('list_id', None)
+        list_handle = data.get('list_handle', None)
+
+        if not list_id or list_handle != "list_stop":
+            self.write(dict(status=-1, msg='参数不能为空'))
+            return
+
+        with DBContext('default') as session:
+            session.query(TaskList).filter(TaskList.list_id == list_id).update({TaskList.schedule: 'OK'})
+            session.query(TaskSched).filter(TaskSched.list_id == list_id).update({TaskSched.task_status: '3'})
+            session.commit()
+        self.write(dict(status=0, msg='订单终止成功'))
 
 
 class TaskSchedHandler(BaseHandler):
@@ -112,6 +136,7 @@ class TaskSchedHandler(BaseHandler):
         }
         self.write(kwargs)
 
+    @auth_login_redirect
     def put(self, *args, **kwargs):
         data = json.loads(self.request.body.decode("utf-8"))
         list_id = data.get('list_id', None)
@@ -162,6 +187,7 @@ class TaskSchedHandler(BaseHandler):
 
 
 class TaskLogHandler(BaseHandler):
+    @auth_login_redirect
     def get(self, *args, **kwargs):
         list_id = self.get_argument('list_id', default=1, strip=True)
         group = self.get_argument('task_group', default=None, strip=True)

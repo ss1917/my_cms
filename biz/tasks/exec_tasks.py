@@ -169,6 +169,9 @@ class MyExecute():
             ### 检查订单状态
             if self.check_group('all') == '3':
                 ### 修改订单进度以及退出循环
+                with DBContext('default') as session:
+                    session.query(TaskList).filter(TaskList.list_id == self.flow_id).update({TaskList.schedule: 'OK'})
+                    session.commit()
                 break
 
             ### 如果之前执行组都成功，任务正式开始

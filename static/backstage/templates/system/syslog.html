@@ -31,10 +31,6 @@
         <div class="layui-col-lg10 layui-col-md10 layui-col-sm12 layui-col-xs12">
             <div class="user-tables">
                 <table id="logTables" lay-filter="logTables"></table>
-                <script type="text/html" id="switchTpl">
-                    <input type="checkbox" name="role_id" value="{{d.role_id}}" lay-skin="switch" lay-text="启用|已禁用"
-                           lay-filter="sexDemo" {{ d.status== 0 ? 'checked' : '' }}>
-                </script>
             </div>
         </div>
     </div>

@@ -49,9 +49,14 @@ def auth_login_redirect(func):
 
         ### 写入日志
         if self.request.method != 'GET':
+            try:
+                data = json.loads(self.request.body.decode("utf-8"))
+            except Exception as e:
+                pass
+
             with DBContext('default') as session:
                 session.add(OperationRecord(username=username, nickname=nickname, method=self.request.method,
-                                            uri=self.request.uri))
+                                            uri=self.request.uri,data=str(data)))
                 session.commit()
 
         func(self, *args, **kwargs)

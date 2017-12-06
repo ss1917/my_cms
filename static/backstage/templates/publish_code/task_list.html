@@ -27,23 +27,6 @@
                 <div class="layui-tab-content">
                     <div class="layui-tab-item layui-show user-tables">
                         <table id="tasklistTables" lay-filter="tasklistTables"></table>
-                        <script type="text/html" id="statusTpl">
-                            {{#  if(d.status == "0" ){ }}
-                            <span style="">新建</span>
-                            {{# } else if(d.status == "1" )  { }}
-                            <span class="layui-badge layui-bg-cyan">等待</span>
-                            {{# } else if(d.status == "2" )  { }}
-                            <span class="layui-badge layui-bg-blue">运行</span>
-                            {{# } else if(d.status == "3" )  { }}
-                            <span class="layui-badge layui-bg-green">完成</span>
-                            {{# } else if(d.status == "4" )  { }}
-                            <span class="layui-badge layui-bg-orange">错误</span>
-                            {{# } else if(d.status == "5" )  { }}
-                            <span class="layui-badge layui-bg-gray">手动</span>
-                            {{# } else { }}
-                            <span class="layui-badge">{{d.status}}</span>
-                            {{#  } }}
-                        </script>
                     </div>
                     <div class="layui-tab-item user-tables">
                         <table id="histTables" lay-filter="histTables"></table>
@@ -54,7 +37,35 @@
     </div>
 </div>
 <!-- 加载js文件 -->
+<script type="text/html" id="statusTpl">
+    {{#  if(d.status == "0" ){ }}
+    <span style="">新建</span>
+    {{# } else if(d.status == "1" )  { }}
+    <span class="layui-badge layui-bg-cyan">等待</span>
+    {{# } else if(d.status == "2" )  { }}
+    <span class="layui-badge layui-bg-blue">运行</span>
+    {{# } else if(d.status == "3" )  { }}
+    <span class="layui-badge layui-bg-green">完成</span>
+    {{# } else if(d.status == "4" )  { }}
+    <span class="layui-badge layui-bg-orange">错误</span>
+    {{# } else if(d.status == "5" )  { }}
+    <span class="layui-badge layui-bg-gray">手动</span>
+    {{# } else { }}
+    <span class="layui-badge">{{d.status}}</span>
+    {{#  } }}
+</script>
+<script type="text/html" id="scheduleTpl">
+    {{#  if(d.schedule == "OK" ){ }}
+    <span class="layui-badge layui-bg-green">完成</span>
+    {{# } else { }}
+    <span class="layui-badge layui-bg-orange">错误</span>
+    {{#  } }}
+</script>
 <script type="text/html" id="publishbar">
+    {{#  if(d.schedule != "OK" ){ }}
+    <a class="layui-btn layui-btn-mini layui-btn-warm" lay-event="take_over">接手</a>
+    <a class="layui-btn layui-btn-mini layui-btn-danger" lay-event="list_stop">终止</a>
+    {{#  } }}
     <a class="layui-btn layui-btn-mini" lay-event="check">查看</a>
     <a class="layui-btn layui-btn-normal layui-btn-mini" lay-event="xiangqing">详情</a>
 </script>

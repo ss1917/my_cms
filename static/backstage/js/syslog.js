@@ -8,19 +8,18 @@ layui.use(['layer', 'form', 'table', 'common'], function () {
     var tableIns = table.render({
         elem: '#logTables',
         cols: [
-            [ {
-                field: 'id', width: 100, title: 'ID', sort: true,
-                // fixed: true
-            }, {
+            [{
                 field: 'username', width: 150, title: '用户名', align: 'center',
             }, {
                 field: 'nickname', width: 100, title: '昵称', align: 'center',
             }, {
-                field: 'method', width: 100, title: '请求方法', align: 'center',
+                field: 'method', width: 80, title: '请求方法', align: 'center',
             }, {
-                field: 'uri', width: 260, title: '请求URI', align: 'center',
+                field: 'uri', width: 250, title: '请求URI', align: 'center',
             }, {
-                field: 'ctime', width: 220, title: '时间', align: 'center',
+                field: 'data', width: 180, title: '请求数据', align: 'center',
+            }, {
+                field: 'ctime', width: 180, title: '时间', align: 'center',
             }]
 
         ],

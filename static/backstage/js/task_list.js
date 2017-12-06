@@ -24,11 +24,11 @@ layui.use(['layer', 'form', 'table', 'common', 'element',], function () {
             }, {
                 field: 'status', width: 80, title: '状态', align: 'center', templet: '#statusTpl', unresize: true,
             }, {
-                field: 'ctime', width: 180, title: '创建时间', align: 'center',
+                field: 'ctime', width: 60, title: '创建时间', align: 'center',
             }, {
                 field: 'stime', width: 180, title: '开始时间', align: 'center',
             }, {
-                title: '常用操作', width: 120, align: 'center', toolbar: '#publishbar', fixed: "right"
+                title: '常用操作', width: 180, align: 'center', toolbar: '#publishbar', fixed: "right"
             }]
         ],
         url: '/v1/task/list/',
@@ -50,11 +50,11 @@ layui.use(['layer', 'form', 'table', 'common', 'element',], function () {
             }, {
                 field: 'task_type', width: 100, title: '任务类型', align: 'center',
             }, {
-                field: 'creator', width: 100, title: '提交人', align: 'center',
+                field: 'creator', width: 80, title: '提交人', align: 'center',
             }, {
-                field: 'executor', width: 100, title: '接手人', align: 'center',
+                field: 'executor', width: 80, title: '接手人', align: 'center',
             }, {
-                field: 'status', width: 80, title: '状态', align: 'center', templet: '#statusTpl', unresize: true,
+                field: 'schedule', width: 80, title: '进度', align: 'center', templet: '#scheduleTpl', unresize: true,
             }, {
                 field: 'ctime', width: 180, title: '创建时间', align: 'center',
             }, {
@@ -64,7 +64,7 @@ layui.use(['layer', 'form', 'table', 'common', 'element',], function () {
             }]
 
         ],
-        url: '/v1/task/list/',
+        url: '/v1/task/list/?history=history',
         page: true,
         even: true,
         id: 'histTables',
@@ -114,7 +114,7 @@ layui.use(['layer', 'form', 'table', 'common', 'element',], function () {
             console.log(data.list_id);
             var index = layer.open({
                 type: 2,
-                content: ['/static/backstage/templates/publish_code/task_details.html?list_id='+data.list_id],
+                content: ['/static/backstage/templates/publish_code/task_details.html?list_id=' + data.list_id],
                 area: ['320px', '195px'],
                 maxmin: true,
                 success: function (index, layero) {//回调
@@ -127,18 +127,12 @@ layui.use(['layer', 'form', 'table', 'common', 'element',], function () {
             });
             layer.full(index);
 
-        } else if (obj.event === 'xiangqing1') {
-            //layer.alert('授权行：<br>' + JSON.stringify(data))
-            common.larryCmsMessage('最近好累，还是过段时间在写吧!', 'info');
-
-        } else if (obj.event === 'del') {
-            layer.confirm('删除行?', function (index) {
-                var IdArr = [];
-                IdArr.push(data.user_id);
+        } else if (obj.event === 'list_stop') {
+            layer.confirm('确定要终止当前任务吗?', function (index) {
                 $.ajax({
-                    url: "/v1/accounts/user/",
-                    type: 'DELETE',
-                    data: JSON.stringify({"user_id": IdArr}),
+                    url: "/v1/task/list/",
+                    type: 'PUT',
+                    data: JSON.stringify({"list_id": data.list_id, "list_handle": "list_stop"}),
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (data) {
@@ -146,7 +140,11 @@ layui.use(['layer', 'form', 'table', 'common', 'element',], function () {
                             layer.msg(data.msg, {icon: 1, time: 1000});
                             layer.closeAll('page');
                             setTimeout(function () {
-                                obj.del();
+                                table.reload('tasklistTables', {
+                                    page: {
+                                        curr: 1 //重新从第 1 页开始
+                                    }
+                                });
                             }, 1000);
                         } else {
                             layer.msg(data.msg, {icon: 2, time: 1000});
