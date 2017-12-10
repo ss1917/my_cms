@@ -43,12 +43,28 @@
 <script id="task" type="text/html">
     <div class="layui-form-item">
         <label class="layui-form-label">参数信息：</label>
-        <div class="layui-input-block"></div>
-        {{# layui.each(d.args_keys, function(index, item){ }}
         <div class="layui-input-block">
-            {{ item }}： &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{ d.new_agrs[item] }}
+            <table class="layui-table" lay-skin="line">
+                <colgroup>
+                    <col width="300">
+                    <col>
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>参数</th>
+                    <th>值</th>
+                </tr>
+                </thead>
+                <tbody>
+                {{# layui.each(d.args_keys, function(index, item){ }}
+                <tr>
+                    <td>{{ item }}</td>
+                    <td>{{ d.new_agrs[item] }}</td>
+                </tr>
+                {{# }); }}
+                </tbody>
+            </table>
         </div>
-        {{# }); }}
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">任务描述：</label>
