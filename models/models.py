@@ -126,9 +126,9 @@ class ArgsList(Base):
 
     ### 参数对照表
     args_id = Column('args_id', Integer, primary_key=True, autoincrement=True)
-    args_name = Column('args_name', String(25))
-    args_self = Column('args_self', String(35))
-    creator = Column('creator', String(30))
+    args_name = Column('args_name', String(30))
+    args_self = Column('args_self', String(50))
+    creator = Column('creator', String(35))
     utime = Column('utime', DateTime(), default=datetime.now, onupdate=datetime.now)
 
 if __name__ == '__main__':

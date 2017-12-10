@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>任务查看</title>
+    <link rel="Shortcut Icon" href="/favicon.ico"/>
+    <!-- load css -->
+    <link rel="stylesheet" type="text/css" href="../../../common/frame/layui/css/layui.css" media="all">
+    <link rel="stylesheet" type="text/css" href="../../../common/css/gobal.css" media="all">
+    <link rel="stylesheet" type="text/css" href="../../../common/css/animate.css" media="all">
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" media="all">
+    <link rel="stylesheet" type="text/css" href="../../css/mypanel.css" media="all">
+</head>
+</head>
+<body>
+<div class="larry-fluid larry-wrapper">
+    <div class="layui-row lay-col-space20">
+        <div class="layui-cos-xs12 layui-col-sm12 layui-col-md12 layui-col-lg12">
+            <fieldset class="layui-elem-field layui-field-title site-title">
+                <legend><a name="color-design">任务检查</a></legend>
+            </fieldset>
+            <section class="larry-body animated fadeInRightBig">
+                <div class="larry-body-content clearfix">
+                    <div class="layui-row layui-col-space20 ">
+                        <div class="layui-col-md6 layui-col-md-offset1">
+                            <label class="layui-form-label">
+                                <div class="" id="larry_group">
+                                    <div id="view1"></div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    <form class="layui-form">
+                        <div id="view"></div>
+                    </form>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+
+<!-- 加载js文件 -->
+<script id="task" type="text/html">
+    <div class="layui-form-item">
+        <label class="layui-form-label">参数信息：</label>
+        <div class="layui-input-block"></div>
+        {{# layui.each(d.args_keys, function(index, item){ }}
+        <div class="layui-input-block">
+            {{ item }}： &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{ d.new_agrs[item] }}
+        </div>
+        {{# }); }}
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">任务描述：</label>
+        <div class="layui-input-block"></div>
+        <div class="layui-input-block">
+            {{ d.details }}
+        </div>
+    </div>
+    <form class="layui-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label">执行时间：</label>
+            <div class="layui-input-block">
+                <input type="text" class="layui-input" id="date1" name="start_time" value=""
+                       lay-verify="required">
+            </div>
+        </div>
+        {{# if(d.executor == d.username ){ }}
+        {{# if(d.schedule == "new" ){ }}
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit="" lay-filter="submit" data-type="submit">提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+        {{# } }}
+        {{# } }}
+    </form>
+</script>
+
+<script type="text/javascript" src="../../../common/frame/layui/layui.js"></script>
+<script type="text/javascript" src="../../js/common.js"></script>
+<script type="text/javascript" src="../../js/task_check.js"></script>
+</body>
+</html>

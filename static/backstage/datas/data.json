@@ -169,7 +169,7 @@
 		"pid": "0",
 		"title": "发布列表",
 		"icon": "&#xe79c;",
-		"url": "/static/backstage/templates/publish_code/publish_list.html",
+		"url": "/static/backstage/templates/task/publish_list.html",
 		"spread": false
 	}, {
 		"id": "6",
@@ -183,7 +183,7 @@
 			"pid": "0",
 			"title": "我的发布",
 			"icon": "&#xe869;",
-			"url": "/static/backstage/templates/publish_code/task_list.html",
+			"url": "/static/backstage/templates/task/task_list.html",
 			"spread": false
 		}, {
 			"id": "10",

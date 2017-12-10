@@ -23,7 +23,7 @@ CREATE TABLE `users` (
   `user_id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(50) NOT NULL,
   `password` varchar(100),
-  `nickname` varchar(100),
+  `nickname` varchar(50),
   `email` varchar(50),
   `tel` varchar(11),
   `wechat` varchar(50),
@@ -36,7 +36,7 @@ CREATE TABLE `users` (
   `ctime` datetime DEFAULT NULL,
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
-insert into users value(2,'ss','xxx','沈硕','111@qq.com','15618718060','kf','10086','开发部','222','');
+insert into users value(2,'ss','xxx','沈硕','111@qq.com','15618718060','kf','10086','开发部','222','0','','','');
 
 ##### 角色表
 CREATE TABLE `roles` (
@@ -105,7 +105,7 @@ insert into role_functions value(2,'2','2','0','','');
   `ctime` datetime DEFAULT NULL,
   `stime` datetime DEFAULT NULL,
   PRIMARY KEY (`list_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 ##### 任务日志表
 
@@ -183,4 +183,21 @@ CREATE TABLE `task_sched` (
   `utime` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8;
+
+##### 模板列表
+
+ CREATE TABLE `args_list` (
+  `args_id` int(11) NOT NULL AUTO_INCREMENT,
+  `args_name` varchar(30) NOT NULL,
+  `args_self` varchar(50) NOT NULL,
+  `creator` varchar(35) NOT NULL,
+  `utime` datetime DEFAULT NULL,
+  PRIMARY KEY (`args_id`)
+) DEFAULT CHARSET=utf8;
+```
+####测试数据
+```
+insert into temp_list values(1,'ceshi1','ss','',''),(2,'ceshi2','ss','','');
+insert into temp_details value(4,'2','1','2','测试2','echo hello && sleep 10 && ls /tmp','','','root','127.0.0.1','','',''),(5,'2','1','3','测试3','echo arg01 && sleep 10 && ls /tmp','','','root','127.0.0.1','','','');
+insert into args_list values(1,'版本','VERSION','ss',''),(2,'环境','ENVI','ss','');
 ```

@@ -44,14 +44,14 @@ class AcceptTaskHandler(BaseHandler):
         data = json.loads(self.request.body.decode("utf-8"))
         ### 首先判断参数是否完整（temp_id，hosts）必填
         exec_time = data.get('exec_time', '2038-10-25 14:00:00')
-        temp_id = str(data.get('temp_id', ''))
+        temp_id = str(data.get('temp_id', None))
         task_type = data.get('task_type', '其他')
-        submitter = data.get('submitter', self.get_current_user())  ### 应根据登录的用户
+        submitter = data.get('submitter', self.get_current_user().decode("utf-8"))  ### 应根据登录的用户
         executor = data.get('executor', '')  ### 审批人可以为空
         args = data.get('args', '')  ### 参数，可以为空
-        hosts = data.get('hosts', '')  ### 执行主机，不能为空
+        hosts = data.get('hosts', None)  ### 执行主机，不能为空
         details = data.get('details', '')  ### 任务描述
-        if hosts == '' or temp_id == '':
+        if not hosts or not temp_id:
             json_data = {
                 'status': '2',
                 'msg': '主机和模板ID不能为空'
@@ -70,7 +70,6 @@ class AcceptTaskHandler(BaseHandler):
                 g = g[0].strip()
                 group_list.append(g)
                 hosts_dic[g] = hosts.get(g, '')
-            hosts_dic['main'] = hosts.get('main', '')
 
         if set(group_list).issubset(set(hosts.keys())):
             with DBContext('default') as session:
@@ -87,13 +86,13 @@ class AcceptTaskHandler(BaseHandler):
             with MessageQueueBase('task_sced', 'direct', 'the_task') as save_paper_channel:
                 save_paper_channel.publish_message(str(new_list.list_id))
 
-            self.write(dict(status=0, msg="任务建立成功",list_id=new_list.list_id))
+            self.write(dict(status=0, msg="任务建立成功", list_id=new_list.list_id))
         else:
-            self.write(dict(status=3,msg="主机分组和模板分组不匹配"))
+            self.write(dict(status=3, msg="主机分组和模板分组不匹配"))
 
 
 accept_task_urls = [
-    (r"/v1/accept_task/", AcceptTaskHandler),
+    (r"/v1/task/accept/", AcceptTaskHandler),
     (r"/", LivenessProbe)
 ]
 if __name__ == "__main__":

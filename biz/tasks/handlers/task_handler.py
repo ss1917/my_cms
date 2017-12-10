@@ -11,7 +11,7 @@ import json
 from ast import literal_eval
 from libs.bash_handler import BaseHandler
 from libs.db_context import DBContext
-from models.models import TaskList, TaskSched, TempDetails, TaskLog, model_to_dict
+from models.models import TaskList, TaskSched, TempDetails, TaskLog, ArgsList, model_to_dict
 from libs.auth_login import auth_login_redirect
 
 
@@ -55,16 +55,65 @@ class TaskListHandler(BaseHandler):
         data = json.loads(self.request.body.decode("utf-8"))
         list_id = data.get('list_id', None)
         list_handle = data.get('list_handle', None)
+        start_time = data.get('start_time', None)
 
-        if not list_id or list_handle != "list_stop":
+        if not list_id or not list_handle:
             self.write(dict(status=-1, msg='参数不能为空'))
             return
+        if list_handle == "list_stop":
+            with DBContext('default') as session:
+                session.query(TaskList).filter(TaskList.list_id == list_id).update({TaskList.schedule: 'OK'})
+                session.query(TaskSched).filter(TaskSched.list_id == list_id).update({TaskSched.task_status: '3'})
+                session.commit()
+            self.write(dict(status=0, msg='订单终止成功'))
+            return
+        elif list_handle == "list_start" and start_time:
+            print (start_time)
+            with DBContext('default') as session:
+                session.query(TaskList).filter(TaskList.list_id == list_id).update(
+                    {TaskList.schedule: 'ready', TaskList.stime: start_time,TaskList.status:'1'})
+                session.query(TaskSched).filter(TaskSched.list_id == list_id, TaskSched.task_status == '0').update(
+                    {TaskSched.task_status: '1'})
+                session.commit()
+        self.write(dict(status=0, msg='任务开始成功'))
+        return
 
-        with DBContext('default') as session:
-            session.query(TaskList).filter(TaskList.list_id == list_id).update({TaskList.schedule: 'OK'})
-            session.query(TaskSched).filter(TaskSched.list_id == list_id).update({TaskSched.task_status: '3'})
-            session.commit()
-        self.write(dict(status=0, msg='订单终止成功'))
+
+class TaskCheckHandler(BaseHandler):
+    @auth_login_redirect
+    def get(self, *args, **kwargs):
+        list_id = self.get_argument('list_id', default=None, strip=True)
+        if not list_id:
+            self.write(dict(status=-1, msg='订单ID不能为空'))
+            return
+
+        with DBContext('readonly') as session:
+            task_info = session.query(TaskList).filter(TaskList.list_id == list_id).all()
+            argsinfo = session.query(ArgsList.args_name, ArgsList.args_self).all()
+
+        args_record = []
+        new_agrs_dict = {}
+        for msg in task_info:
+            data_dict = model_to_dict(msg)
+            data_dict['ctime'] = str(data_dict['ctime'])
+            data_dict['stime'] = str(data_dict['stime'])
+            data_dict['username'] = self.get_current_user().decode("utf-8")
+
+        args_dict = literal_eval(data_dict.get('args', None))
+
+        if args_dict:
+            for k, v in args_dict.items():
+                for i in argsinfo:
+                    args_record.append(i[1])
+                    if i[1] == k:
+                        new_agrs_dict[i[0]] = v
+                if k not in args_record:
+                    new_agrs_dict[k] = v
+
+        data_dict['new_agrs'] = new_agrs_dict
+        data_dict['args_keys'] = list(new_agrs_dict.keys())
+
+        self.write(dict(status=0, msg='获取订单信息成功', data=data_dict))
 
 
 class TaskSchedHandler(BaseHandler):
@@ -214,6 +263,7 @@ class TaskLogHandler(BaseHandler):
 
 task_list_urls = [
     (r"/v1/task/list/", TaskListHandler),
+    (r"/v1/task/check/", TaskCheckHandler),
     (r"/v1/task/sched/", TaskSchedHandler),
     (r"/v1/task/log/", TaskLogHandler),
 ]

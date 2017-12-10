@@ -14,7 +14,7 @@ layui.use(['layer', 'form', 'table', 'common', 'element',], function () {
                 field: 'list_id', width: 60, title: 'ID', sort: true,
                 // fixed: true
             }, {
-                field: 'task_name', width: 150, title: '任务名称', align: 'center',
+                field: 'task_name', width: 150, title: '任务名称', align: 'center',templet: '#checkTpl'
             }, {
                 field: 'task_type', width: 100, title: '任务类型', align: 'center',
             }, {
@@ -22,13 +22,15 @@ layui.use(['layer', 'form', 'table', 'common', 'element',], function () {
             }, {
                 field: 'executor', width: 100, title: '接手人', align: 'center',
             }, {
+                title: '常用操作', width: 120, align: 'center', toolbar: '#taskbar'
+            }, {
                 field: 'status', width: 80, title: '状态', align: 'center', templet: '#statusTpl', unresize: true,
             }, {
-                field: 'ctime', width: 60, title: '创建时间', align: 'center',
+                field: 'ctime', width: 180, title: '创建时间', align: 'center',
             }, {
                 field: 'stime', width: 180, title: '开始时间', align: 'center',
             }, {
-                title: '常用操作', width: 180, align: 'center', toolbar: '#publishbar', fixed: "right"
+                title: '任务详情', width: 120, align: 'center', toolbar: '#publishbar', fixed: "right"
             }]
         ],
         url: '/v1/task/list/',
@@ -46,21 +48,21 @@ layui.use(['layer', 'form', 'table', 'common', 'element',], function () {
                 field: 'list_id', width: 60, title: 'ID', sort: true,
                 // fixed: true
             }, {
-                field: 'task_name', width: 150, title: '任务名称', align: 'center',
+                field: 'task_name', width: 150, title: '任务名称', align: 'center',templet: '#checkTpl'
             }, {
-                field: 'task_type', width: 100, title: '任务类型', align: 'center',
+                field: 'task_type', width: 100, title: '任务类型', align: 'center'
             }, {
-                field: 'creator', width: 80, title: '提交人', align: 'center',
+                field: 'creator', width: 80, title: '提交人', align: 'center'
             }, {
-                field: 'executor', width: 80, title: '接手人', align: 'center',
+                field: 'executor', width: 80, title: '接手人', align: 'center'
             }, {
                 field: 'schedule', width: 80, title: '进度', align: 'center', templet: '#scheduleTpl', unresize: true,
             }, {
-                field: 'ctime', width: 180, title: '创建时间', align: 'center',
+                field: 'ctime', width: 180, title: '创建时间', align: 'center'
             }, {
-                field: 'stime', width: 180, title: '开始时间', align: 'center',
+                field: 'stime', width: 180, title: '开始时间', align: 'center'
             }, {
-                title: '常用操作', width: 120, align: 'center', toolbar: '#publishbar', fixed: "right"
+                title: '任务详情', width: 180, align: 'center', toolbar: '#publishbar', fixed: "right"
             }]
 
         ],
@@ -114,7 +116,7 @@ layui.use(['layer', 'form', 'table', 'common', 'element',], function () {
             console.log(data.list_id);
             var index = layer.open({
                 type: 2,
-                content: ['/static/backstage/templates/publish_code/task_details.html?list_id=' + data.list_id],
+                content: ['/static/backstage/templates/task/task_details.html?list_id=' + data.list_id],
                 area: ['320px', '195px'],
                 maxmin: true,
                 success: function (index, layero) {//回调

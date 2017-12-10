@@ -37,7 +37,7 @@ layui.use(['layer', 'form', 'table', 'common'], function () {
                 }
             },
             error: function (data) {
-                layer.msg(data.msg, {icon: 2, time: 1000});
+                layer.msg('获取数据失败', {icon: 2, time: 1000});
             },
         });
         return false;
@@ -76,39 +76,6 @@ layui.use(['layer', 'form', 'table', 'common'], function () {
         id: 'taskdetailsTables',
     });
 
-
-    //监听表格复选框选择
-    table.on('checkbox(taskdetailsTables)', function (obj) {
-        console.log(obj)
-    });
-
-    //监听开关
-    form.on('switch(sexDemo)', function (obj) {
-        var data = obj.data;
-        //layer.tips(this.value + this.name + '：' + obj.elem.checked, obj.othis);
-        $.ajax({
-            url: "/v1/accounts/user/",
-            type: 'PATCH',
-            data: JSON.stringify({"user_id": this.value}),
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function (data) {
-                if (data.status == 0) {
-                    layer.msg(data.msg, {icon: 1, time: 1000});
-                    layer.closeAll('page');
-                    setTimeout(function () {
-                    }, 1000);
-                } else {
-                    layer.msg(data.msg, {icon: 2, time: 1000});
-                }
-            },
-            error: function (data) {
-                layer.msg('失败', {icon: 2, time: 1000});
-            },
-        });
-        return false;
-
-    });
 
     //监听工具条
     table.on('tool(taskdetailsTables)', function (obj) {
@@ -180,10 +147,9 @@ layui.use(['layer', 'form', 'table', 'common'], function () {
                 layer.close(index);
             });
         } else if (obj.event === 'task_log') {
-            console.log(data.list_id, data.exec_ip, data.task_group, data.task_level)
             var index = layer.open({
                 type: 2,
-                content: '/static/backstage/templates/publish_code/task_log.html?list_id=' + data.list_id + '&exec_ip=' + data.exec_ip+'&task_group='+data.task_group+'&task_level='+data.task_level,
+                content: '/static/backstage/templates/publish_code/task_log.html?list_id=' + data.list_id + '&exec_ip=' + data.exec_ip + '&task_group=' + data.task_group + '&task_level=' + data.task_level,
                 area: ['320px', '195px'],
                 maxmin: true
             });
@@ -227,15 +193,6 @@ layui.use(['layer', 'form', 'table', 'common'], function () {
     });
 
     var active = {
-        add: function () {
-            var index = layer.open({
-                type: 2,
-                content: '/static/backstage/html/user_manage/user_add.html',
-                area: ['320px', '195px'],
-                maxmin: true
-            });
-            layer.full(index);
-        },
         search: function () {
             var input_value = [];
             $(this).siblings().each(function (index, item) {
