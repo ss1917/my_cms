@@ -14,7 +14,7 @@ layui.use(['layer', 'form', 'table', 'common', 'element',], function () {
                 field: 'list_id', width: 60, title: 'ID', sort: true,
                 // fixed: true
             }, {
-                field: 'task_name', width: 150, title: '任务名称', align: 'center',templet: '#checkTpl'
+                field: 'task_name', width: 150, title: '任务名称', align: 'center', templet: '#checkTpl'
             }, {
                 field: 'task_type', width: 100, title: '任务类型', align: 'center',
             }, {
@@ -48,7 +48,7 @@ layui.use(['layer', 'form', 'table', 'common', 'element',], function () {
                 field: 'list_id', width: 60, title: 'ID', sort: true,
                 // fixed: true
             }, {
-                field: 'task_name', width: 150, title: '任务名称', align: 'center',templet: '#checkTpl'
+                field: 'task_name', width: 150, title: '任务名称', align: 'center', templet: '#checkTpl'
             }, {
                 field: 'task_type', width: 100, title: '任务类型', align: 'center'
             }, {
@@ -85,13 +85,12 @@ layui.use(['layer', 'form', 'table', 'common', 'element',], function () {
     //监听工具条
     table.on('tool(tasklistTables)', function (obj) {
         var data = obj.data;
-        //console.log(data);
-        if (obj.event === 'check1') {
-            layer.confirm('确定要保存编辑吗？：' + data.username, function (index) {
+        if (obj.event === 'take_over') {
+            layer.confirm('确定要释放此任务？？？', function (index) {
                 $.ajax({
-                    url: "/v1/accounts/user/",
+                    url: "/v1/task/list/",
                     type: 'PUT',
-                    data: JSON.stringify(data),
+                    data: JSON.stringify({"list_id": data.list_id, "list_handle": "take_over"}),
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (data) {
@@ -99,35 +98,52 @@ layui.use(['layer', 'form', 'table', 'common', 'element',], function () {
                             layer.msg(data.msg, {icon: 1, time: 1000});
                             layer.closeAll('page');
                             setTimeout(function () {
-                                //window.location.href = '/';
+                                table.reload('tasklistTables', {
+                                    page: {
+                                        curr: 1 //重新从第 1 页开始
+                                    }
+                                });
                             }, 1000);
                         } else {
                             layer.msg(data.msg, {icon: 2, time: 1000});
                         }
                     },
                     error: function (data) {
-                        layer.msg(data.msg, {icon: 2, time: 1000});
+                        layer.msg('接手失败', {icon: 2, time: 1000});
                     },
                 });
                 layer.close(index);
-                return false;
             });
-        } else if (obj.event === 'xiangqing') {
-            console.log(data.list_id);
-            var index = layer.open({
-                type: 2,
-                content: ['/static/backstage/templates/task/task_details.html?list_id=' + data.list_id],
-                area: ['320px', '195px'],
-                maxmin: true,
-                success: function (index, layero) {//回调
-                    var list_id = data.list_id
-                },
-                end: function (index) {
-                    layer.close(index);
-                },
 
+        } else if (obj.event === 'task_release') {
+            layer.confirm('确定要释放此任务？？？', function (index) {
+                $.ajax({
+                    url: "/v1/task/list/",
+                    type: 'PUT',
+                    data: JSON.stringify({"list_id": data.list_id, "list_handle": "task_release"}),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.status == 0) {
+                            layer.msg(data.msg, {icon: 1, time: 1000});
+                            layer.closeAll('page');
+                            setTimeout(function () {
+                                table.reload('tasklistTables', {
+                                    page: {
+                                        curr: 1 //重新从第 1 页开始
+                                    }
+                                });
+                            }, 1000);
+                        } else {
+                            layer.msg(data.msg, {icon: 2, time: 1000});
+                        }
+                    },
+                    error: function (data) {
+                        layer.msg('释放失败', {icon: 2, time: 1000});
+                    },
+                });
+                layer.close(index);
             });
-            layer.full(index);
 
         } else if (obj.event === 'list_stop') {
             layer.confirm('确定要终止当前任务吗?', function (index) {
@@ -162,20 +178,4 @@ layui.use(['layer', 'form', 'table', 'common', 'element',], function () {
         }
     });
 
-    $('#larry_group .layui-btn').on('click', function () {
-        var type = $(this).data('type');
-        active[type] ? active[type].call(this) : '';
-    });
-
-    var active = {
-        add: function () {
-            var index = layer.open({
-                type: 2,
-                content: '/static/backstage/html/user_manage/user_add.html',
-                area: ['320px', '195px'],
-                maxmin: true
-            });
-            layer.full(index);
-        },
-    };
 });

@@ -60,22 +60,43 @@ class TaskListHandler(BaseHandler):
         if not list_id or not list_handle:
             self.write(dict(status=-1, msg='参数不能为空'))
             return
-        if list_handle == "list_stop":
+
+        if list_handle == "take_over":
+            '''接手任务'''
+            with DBContext('default') as session:
+                session.query(TaskList).filter(TaskList.list_id == list_id).update(
+                    {TaskList.executor: self.get_current_user().decode("utf-8")})
+                session.commit()
+            self.write(dict(status=0, msg='订单接手成功'))
+            return
+
+        elif list_handle == "task_release":
+            '''释放任务'''
+            with DBContext('default') as session:
+                session.query(TaskList).filter(TaskList.list_id == list_id).update({TaskList.executor: ''})
+                session.commit()
+            self.write(dict(status=0, msg='订单接手成功'))
+            return
+
+        elif list_handle == "list_stop":
             with DBContext('default') as session:
                 session.query(TaskList).filter(TaskList.list_id == list_id).update({TaskList.schedule: 'OK'})
                 session.query(TaskSched).filter(TaskSched.list_id == list_id).update({TaskSched.task_status: '3'})
                 session.commit()
             self.write(dict(status=0, msg='订单终止成功'))
             return
+
         elif list_handle == "list_start" and start_time:
-            print (start_time)
+            print(start_time)
             with DBContext('default') as session:
                 session.query(TaskList).filter(TaskList.list_id == list_id).update(
-                    {TaskList.schedule: 'ready', TaskList.stime: start_time,TaskList.status:'1'})
+                    {TaskList.schedule: 'ready', TaskList.stime: start_time, TaskList.status: '1'})
                 session.query(TaskSched).filter(TaskSched.list_id == list_id, TaskSched.task_status == '0').update(
                     {TaskSched.task_status: '1'})
                 session.commit()
-        self.write(dict(status=0, msg='任务开始成功'))
+                self.write(dict(status=0, msg='任务开始成功'))
+                return
+        self.write(dict(status=-1, msg='未知错误'))
         return
 
 

@@ -113,8 +113,8 @@ class MyExecute():
 
         try:
             myssh.connect(hostname=real_ip, username=info.get('exec_user', 'root'), port=info.get('exec_port', 22),
-                          timeout=300)
-            stdin, stdout, stderr = myssh.exec_command(mycmd, bufsize=-1, timeout=5)
+                          timeout=15)
+            stdin, stdout, stderr = myssh.exec_command(mycmd, bufsize=-1, timeout=1800)
             status = stdout.channel.recv_exit_status()
         except Exception as e:
             status = -1
@@ -163,8 +163,8 @@ class MyExecute():
             print('list-{0} gourp-{1} perform sleep after {2} seconds'.format(self.flow_id, self.group_id, int_sleep))
             time.sleep(int_sleep)
             int_sleep += 2
-            if int_sleep > 20:
-                int_sleep = 20
+            if int_sleep > 15:
+                int_sleep = 15
 
             ### 检查订单状态
             if self.check_group('all') == '3':

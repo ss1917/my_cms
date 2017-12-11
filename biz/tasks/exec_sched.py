@@ -8,7 +8,7 @@ role   : exec sched
 ### 任务组按顺序触发，任务按预设触发，默认顺序执行
 
 '''
-import sys, time
+import time
 import multiprocessing
 from libs.logs import Logger
 from biz.tasks.exec_tasks import MyExecute
@@ -38,7 +38,7 @@ class DealMQ(MessageQueueBase):
             int_sleep += 2
             if int_sleep > 10:
                 int_sleep = 10
-            print('新订单：' +  lid +'等待准备完成')
+            print('新任务：' +  str(lid) +'  等待准备开始,休眠时间' + str(int_sleep))
             with DBContext('readonly') as session:
                 is_exist = session.query(TaskList).filter(TaskList.list_id == lid, TaskList.schedule == 'ready').first()
             if is_exist:
