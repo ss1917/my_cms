@@ -3,7 +3,7 @@
 '''
 author : shenshuo
 date   : 2017年11月14日20:11:27
-role   : za-kf-mg
+role   : 启动程序
 '''
 
 import fire
