@@ -12,7 +12,7 @@ import time
 import multiprocessing
 from libs.logs import Logger
 from biz.tasks.exec_tasks import MyExecute
-
+from sqlalchemy import or_
 from models.models import TaskList, TaskSched
 from libs.db_context import DBContext
 from libs.mqhelper import MessageQueueBase
@@ -86,9 +86,16 @@ class DealMQ(MessageQueueBase):
                 Logger.info("list{0} end of task".format(flow_id))
 
             else:
-                Logger.error('task list id {0} is not ready !!!'.format(body))
-                time.sleep(8)
-                raise SystemExit(-2)
+                with DBContext('readonly') as session:
+                    exist = session.query(TaskList.list_id).filter(TaskList.list_id == flow_id,
+                                                                      or_(TaskList.schedule == 'OK',
+                                                                          TaskList.schedule == 'start')).first()
+                if exist:
+                    Logger.info('task list id {0} is start or OK !!!'.format(body))
+                else:
+                    Logger.error('task list id {0} is not ready !!!'.format(body))
+                    time.sleep(8)
+                    raise SystemExit(-2)
         else:
             Logger.error('[*]body type error, must be int,body:(%s)' % str(body, encoding='utf-8'))
 
