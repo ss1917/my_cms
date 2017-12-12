@@ -149,7 +149,7 @@ layui.use(['layer', 'form', 'table', 'common'], function () {
         } else if (obj.event === 'task_log') {
             var index = layer.open({
                 type: 2,
-                content: '/static/backstage/templates/publish_code/task_log.html?list_id=' + data.list_id + '&exec_ip=' + data.exec_ip + '&task_group=' + data.task_group + '&task_level=' + data.task_level,
+                content: '/static/backstage/templates/task/task_log.html?list_id=' + data.list_id + '&exec_ip=' + data.exec_ip + '&task_group=' + data.task_group + '&task_level=' + data.task_level,
                 area: ['320px', '195px'],
                 maxmin: true
             });

@@ -15,7 +15,6 @@ from biz.tasks.exec_tasks import MyExecute
 
 from models.models import TaskList, TaskSched
 from libs.db_context import DBContext
-from sqlalchemy import or_
 from libs.mqhelper import MessageQueueBase
 
 
@@ -33,17 +32,10 @@ class DealMQ(MessageQueueBase):
         ME.exec_thread()
 
     def exec_list_thread(self, lid, *all_gid):
-        int_sleep = 0
-        while True:
-            time.sleep(int_sleep)
-            int_sleep += 2
-            if int_sleep > 10:
-                int_sleep = 10
-            print('新任务：' + str(lid) + '  等待准备开始,休眠时间' + str(int_sleep))
-            with DBContext('readonly') as session:
-                is_exist = session.query(TaskList).filter(TaskList.list_id == lid, TaskList.schedule == 'ready').first()
-            if is_exist:
-                break
+        ### 标记为任务开始
+        with DBContext('default') as session:
+            session.query(TaskList.list_id).filter(TaskList.list_id == lid).update({TaskList.schedule: 'start'})
+            session.commit()
 
         threads = []
         #####取所有IP###
@@ -78,7 +70,7 @@ class DealMQ(MessageQueueBase):
             flow_id = args
             with DBContext('readonly') as session:
                 is_exist = session.query(TaskList.list_id).filter(TaskList.list_id == flow_id,
-                                                                  or_(TaskList.schedule.in_(['new', 'ready']))).first()
+                                                                  TaskList.schedule == 'ready').first()
             ###查询ID是否存在并且未执行
             if is_exist:
                 all_group = session.query(TaskSched.task_group).filter(TaskSched.list_id == flow_id).group_by(
@@ -91,10 +83,12 @@ class DealMQ(MessageQueueBase):
                     session.query(TaskList.list_id).filter(TaskList.list_id == flow_id).update(
                         {TaskList.schedule: 'OK'})
                     session.commit()
-                Logger.error("list{0} end of task".format(flow_id))
+                Logger.info("list{0} end of task".format(flow_id))
 
             else:
-                Logger.error('list id {0} is not exist or finish !!!'.format(body))
+                Logger.error('task list id {0} is not ready !!!'.format(body))
+                time.sleep(8)
+                raise SystemExit(-2)
         else:
             Logger.error('[*]body type error, must be int,body:(%s)' % str(body, encoding='utf-8'))
 

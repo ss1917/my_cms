@@ -2,10 +2,10 @@
 # -*-coding:utf-8-*-
 '''
 Author : SS
-date   : 2017-10-11 12:48:43
+date   : 2017-11-11 12:48:43
 role   : 接受任务API
 '''
-# import tornado.web
+
 import json
 from ast import literal_eval
 from libs.mqhelper import MessageQueueBase
