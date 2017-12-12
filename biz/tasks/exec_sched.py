@@ -15,6 +15,7 @@ from biz.tasks.exec_tasks import MyExecute
 
 from models.models import TaskList, TaskSched
 from libs.db_context import DBContext
+from sqlalchemy import or_
 from libs.mqhelper import MessageQueueBase
 
 
@@ -38,7 +39,7 @@ class DealMQ(MessageQueueBase):
             int_sleep += 2
             if int_sleep > 10:
                 int_sleep = 10
-            print('新任务：' +  str(lid) +'  等待准备开始,休眠时间' + str(int_sleep))
+            print('新任务：' + str(lid) + '  等待准备开始,休眠时间' + str(int_sleep))
             with DBContext('readonly') as session:
                 is_exist = session.query(TaskList).filter(TaskList.list_id == lid, TaskList.schedule == 'ready').first()
             if is_exist:
@@ -77,12 +78,11 @@ class DealMQ(MessageQueueBase):
             flow_id = args
             with DBContext('readonly') as session:
                 is_exist = session.query(TaskList.list_id).filter(TaskList.list_id == flow_id,
-                                                                  TaskList.schedule != 'OK').first()
+                                                                  or_(TaskList.schedule.in_(['new', 'ready']))).first()
             ###查询ID是否存在并且未执行
             if is_exist:
                 all_group = session.query(TaskSched.task_group).filter(TaskSched.list_id == flow_id).group_by(
                     TaskSched.task_group).all()
-                session.commit()
 
                 ### 多进程分组执行任务
                 self.exec_list_thread(flow_id, *all_group)
