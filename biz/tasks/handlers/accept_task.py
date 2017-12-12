@@ -45,7 +45,8 @@ class AcceptTaskHandler(BaseHandler):
         ### 首先判断参数是否完整（temp_id，hosts）必填
         exec_time = data.get('exec_time', '2038-10-25 14:00:00')
         temp_id = str(data.get('temp_id', None))
-        task_type = data.get('task_type', '其他')
+        task_name = data.get('task_name', '其他')
+        task_type = data.get('task_type', None)
         submitter = data.get('submitter', self.get_current_user().decode("utf-8"))  ### 应根据登录的用户
         executor = data.get('executor', '')  ### 审批人可以为空
         args = data.get('args', '')  ### 参数，可以为空
@@ -73,8 +74,10 @@ class AcceptTaskHandler(BaseHandler):
 
         if set(group_list).issubset(set(hosts.keys())):
             with DBContext('default') as session:
-                temp_name = session.query(TempList.temp_name).filter(TempList.temp_id == temp_id).one()
-                new_list = TaskList(task_name=temp_name[0], task_type=task_type, hosts=str(hosts_dic), args=args,
+                if not task_type:
+                    temp_name = session.query(TempList.temp_name).filter(TempList.temp_id == temp_id).one()
+                    task_type = temp_name[0]
+                new_list = TaskList(task_name=task_name, task_type=task_type, hosts=str(hosts_dic), args=args,
                                     details=details, descript='', creator=submitter, executor=executor, status='0',
                                     schedule='new', temp_id=temp_id, stime=exec_time)
             session.add(new_list)
