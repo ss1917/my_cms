@@ -75,8 +75,7 @@ class AcceptTaskHandler(BaseHandler):
             with DBContext('default') as session:
                 temp_name = session.query(TempList.temp_name).filter(TempList.temp_id == temp_id).one()
                 new_list = TaskList(task_name=temp_name[0], task_type=task_type, hosts=str(hosts_dic), args=args,
-                                    details=details,
-                                    descript='', mark='', memo='', creator=submitter, executor=executor, status='0',
+                                    details=details, descript='', creator=submitter, executor=executor, status='0',
                                     schedule='new', temp_id=temp_id, stime=exec_time)
             session.add(new_list)
             session.commit()

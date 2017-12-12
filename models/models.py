@@ -30,9 +30,9 @@ class TaskList(Base):
     hosts = Column('hosts', Text())            ### 主机地址
     args = Column('args', Text())              ### 参数
     details = Column('details', Text())        ### 详情
-    descript = Column('descript', Text())      ### 描述
-    mark = Column('mark', String(10))          ### 标记
-    memo = Column('memo', String(10))          ### 备注
+    descript = Column('descript', Text())      ### 描述、备注
+    #mark = Column('mark', String(10))          ### 标记
+    #memo = Column('memo', String(10))          ### 备注
     creator = Column('creator', String(50))    ### 创建者
     executor = Column('executor', String(50))  ### 执行者
     status = Column('status', String(5))       ### 任务状态
