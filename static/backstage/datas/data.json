@@ -318,7 +318,7 @@
             "pid": "0",
             "title": "模板列表",
             "icon": "&#xea0c;",
-            "url": "html/temp.html",
+            "url": "/static/backstage/templates/task/temp_list.html",
             "spread": false
           },
           {

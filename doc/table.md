@@ -198,4 +198,5 @@ CREATE TABLE `task_sched` (
 insert into temp_list values(1,'ceshi1','ss','',''),(2,'ceshi2','ss','','');
 insert into temp_details value(4,'2','1','2','测试2','echo hello && sleep 10 && ls /tmp','','','root','127.0.0.1','','',''),(5,'2','1','3','测试3','echo arg01 && sleep 10 && ls /tmp','','','root','127.0.0.1','','','');
 insert into args_list values(1,'版本','VERSION','ss',''),(2,'环境','ENVI','ss','');
+insert into cmd_list value(2,'测试一下2','echo this is a test2','','','','',''),(3,'测试一下3','echo this is a test3','','','','','');
 ```

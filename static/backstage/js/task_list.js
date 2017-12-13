@@ -36,7 +36,7 @@ layui.use(['layer', 'form', 'table', 'common', 'element',], function () {
         url: '/v1/task/list/',
         page: true,
         even: true,
-        height: 'full-200',
+        height: 'full-150',
         id: 'tasklistTables',
         limit: 10,
     });
@@ -69,6 +69,7 @@ layui.use(['layer', 'form', 'table', 'common', 'element',], function () {
         url: '/v1/task/list/?history=history',
         page: true,
         even: true,
+        height: 'full-150',
         id: 'histTables',
         limit: 30,
     });

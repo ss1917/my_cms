@@ -92,6 +92,7 @@ class CmdList(Base):
     forc_ip = Column('forc_ip', String(250))
     creator = Column('creator', String(30))
     ctime = Column('ctime', DateTime(), default=datetime.now)
+    utime = Column('utime', DateTime(), default=datetime.now, onupdate=datetime.now)
 
 class TempList(Base):
     __tablename__ = 'temp_list'

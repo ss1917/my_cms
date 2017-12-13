@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>命令管理</title>
+    <link rel="Shortcut Icon" href="/favicon.ico"/>
+    <!-- load css -->
+    <link rel="stylesheet" type="text/css" href="../../../common/frame/layui/css/layui.css" media="all">
+    <link rel="stylesheet" type="text/css" href="../../../common/css/gobal.css" media="all">
+    <link rel="stylesheet" type="text/css" href="../../../common/css/animate.css" media="all">
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" media="all">
+</head>
+</head>
+<body>
+<div class="layui-fluid larry-wrapper">
+    <div class="layui-row layui-col-space10 ">
+        <div class="layui-col-md3">
+            <fieldset id="" class="layui-elem-field">
+                <legend>模板列表</legend>
+                <div class="layui-field-box">
+                    <div class="layui-col-md12 layui-col-space1">
+                        <div class="" id="larry_group">
+                            <div class="layui-inline">
+                                <input class="layui-input" name="temp_name" id="temp_name" placeholder="名称"
+                                       autocomplete="off">
+                            </div>
+                            <button class="layui-btn layui-btn-sm" data-type="add">添加</button>
+                        </div>
+                    </div>
+                    <div class="layui-col-md12 layui-col-space1">
+                        <table id="tempTables" lay-filter="tempTables"></table>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+
+        <div class="layui-col-md9">
+            <fieldset id="menu_func_div" class="layui-elem-field">
+                <legend>模板编辑</legend>
+                <div class="layui-field-box">
+                    <div class="layui-col-md12 layui-col-space1">
+                        <div class="">
+                            <div class="layui-input-inline">
+                                <select name="modules" lay-verify="required" lay-search="">
+                                    <option value="">直接选择或搜索选择</option>
+                                    <option value="1">layer</option>
+                                    <option value="2">form</option>
+                                    <option value="3">layim</option>
+                                    <option value="4">element</option>
+                                    <option value="5">laytpl</option>
+                                    <option value="6">upload</option>
+                                </select>
+                            </div>
+                            <button class="layui-btn layui-btn-mini">添加</button>
+                        </div>
+                    </div>
+                    <div class="layui-col-md12 layui-col-space1">
+                        <table id="cmdTables" lay-filter="cmdTables"></table>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="tempnamebar">
+    <a class="" lay-event="temp_name">{{d.temp_name}}</a>
+</script>
+<script type="text/html" id="tempbar">
+    <a class="layui-btn layui-btn-danger layui-btn-mini" lay-event="del">删除</a>
+</script>
+<script type="text/html" id="cmdbar">
+    <a class="layui-btn layui-btn-mini" lay-event="edit">提交</a>
+    <a class="layui-btn layui-btn-danger layui-btn-mini" lay-event="del">删除</a>
+</script>
+<!-- 加载js文件 -->
+<script type="text/javascript" src="../../../common/frame/layui/layui.js"></script>
+<script type="text/javascript" src="../../js/common.js"></script>
+<script type="text/javascript" src="../../js/temp_list.js"></script>
+</body>
+</html>
