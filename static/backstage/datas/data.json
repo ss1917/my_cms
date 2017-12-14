@@ -326,7 +326,7 @@
             "pid": "0",
             "title": "参数列表",
             "icon": "&#xea0c;",
-            "url": "html/temp.html",
+            "url": "/static/backstage/templates/task/args_list.html",
             "spread": false
           }
         ]
