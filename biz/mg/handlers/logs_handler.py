@@ -6,6 +6,7 @@ date   : 2017年11月15日11:22:08
 role   : system log
 '''
 
+import time, datetime
 from libs.bash_handler import BaseHandler
 from models.mg import OperationRecord, model_to_dict
 from libs.db_context import DBContext
@@ -18,15 +19,19 @@ class LogHandler(BaseHandler):
         page_size = self.get_argument('page', default=1, strip=True)
         limit = self.get_argument('limit', default=10, strip=True)
         username = self.get_argument('username', default=None, strip=True)
+        ctime = self.get_argument('ctime', default='2017-12-15 00:00:00', strip=True)
+        time_tuple = time.strptime(ctime, '%Y-%m-%d %H:%M:%S')
         limit_start = (int(page_size) - 1) * int(limit)
         log_list = []
         with DBContext('readonly') as session:
             count = session.query(OperationRecord).count()
-            log_info = session.query(OperationRecord).order_by(-OperationRecord.ctime).offset(limit_start).limit(
-                int(limit))
+            log_info = session.query(OperationRecord).filter(OperationRecord.ctime > time_tuple).order_by(
+                -OperationRecord.ctime).offset(limit_start).limit(int(limit))
 
             if username:
-                log_info = session.query(OperationRecord).filter(
+                count = session.query(OperationRecord).filter(OperationRecord.ctime > time_tuple,
+                    OperationRecord.username.like(username + '%')).count()
+                log_info = session.query(OperationRecord).filter(OperationRecord.ctime > time_tuple,
                     OperationRecord.username.like(username + '%')).order_by(-OperationRecord.ctime).offset(
                     limit_start).limit(int(limit))
 

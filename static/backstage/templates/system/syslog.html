@@ -22,14 +22,17 @@
 
             <div class="" id="larry_group">
                 <div class="layui-inline">
-                <input class="layui-input" name="user_name" id="log_search"  placeholder="用户名" autocomplete="off">
+                    <input class="layui-input" name="user_name" id="log_search" placeholder="用户名" autocomplete="off">
+                </div>
+                <div class="layui-inline">
+                    <input type="text" class="layui-input" id="timedata" name="ctime" lay-verify="required">
                 </div>
                 <button class="layui-btn" data-type="search">搜索</button>
             </div>
         </div>
 
-        <div class="layui-col-lg10 layui-col-md10 layui-col-sm12 layui-col-xs12">
-            <div class="user-tables">
+        <div class="layui-col-md11 layui-col-space1">
+            <div class="layui-tab-item layui-show user-tables">
                 <table id="logTables" lay-filter="logTables"></table>
             </div>
         </div>

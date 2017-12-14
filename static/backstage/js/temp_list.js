@@ -55,40 +55,45 @@ layui.use(['layer', 'form', 'table', 'common'], function () {
         id: 'tempTables',
     });
 
+    var tableIns = table.render({
+        elem: '#cmdTables',
+        cols: [
+            [{
+                field: 'group', width: 60, title: '组', sort: true, edit: 'text'
+            }, {
+                field: 'level', width: 80, title: '优先级', edit: 'text'
+            }, {
+                field: 'cmd_name', width: 120, title: '名称', align: 'center'
+            }, {
+                field: 'command', width: 200, title: '命令', align: 'center'
+            }, {
+                field: 'exec_user', width: 100, title: '执行用户', align: 'center', edit: 'text'
+            }, {
+                field: 'trigger', width: 80, title: '触发', align: 'center', edit: 'text'
+            }, {
+                field: 'args', width: 220, title: '参数', align: 'center', edit: 'text'
+            }, {
+                field: 'forc_ip', width: 100, title: '指定主机', align: 'center'
+            }, {
+                title: '操作', width: 120, align: 'center', toolbar: '#cmdbar', fixed: "right"
+            }]
+
+        ],
+        url: "/v1/task/details/" ,
+        page: false,
+        even: true,
+        height: 'full-150',
+        id: 'cmdTables',
+    });
+
     table.on('tool(tempTables)', function (obj) {
         var data = obj.data;
         temp_id = obj.data.temp_id
         if (obj.event === "temp_name") {
-            var tableIns = table.render({
-                elem: '#cmdTables',
-                cols: [
-                    [{
-                        field: 'group', width: 60, title: '组', sort: true, edit: 'text'
-                    }, {
-                        field: 'level', width: 80, title: '优先级', edit: 'text'
-                    }, {
-                        field: 'cmd_name', width: 120, title: '名称', align: 'center'
-                    }, {
-                        field: 'command', width: 200, title: '命令', align: 'center'
-                    }, {
-                        field: 'exec_user', width: 100, title: '执行用户', align: 'center', edit: 'text'
-                    }, {
-                        field: 'trigger', width: 80, title: '触发', align: 'center', edit: 'text'
-                    }, {
-                        field: 'args', width: 220, title: '参数', align: 'center', edit: 'text'
-                    }, {
-                        field: 'forc_ip', width: 100, title: '指定主机', align: 'center'
-                    }, {
-                        title: '操作', width: 120, align: 'center', toolbar: '#cmdbar', fixed: "right"
-                    }]
-
-                ],
+            table.reload('cmdTables', {
                 url: "/v1/task/details/?temp_id=" + obj.data.temp_id,
-                page: false,
-                even: true,
-                height: 'full-150',
-                id: 'cmdTables',
             });
+
         } else if (obj.event === 'del') {
             layer.confirm('确定删除此模板？？ 删除后无法恢复！！！', function (index) {
                 $.ajax({

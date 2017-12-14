@@ -4,6 +4,7 @@
 - tornado4.5
 - rabbitmq
 - mysql5.6
+- redis
 
 
 ### python3 startup.py --port=8081  --service=mg
