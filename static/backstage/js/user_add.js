@@ -35,6 +35,7 @@ layui.use(['jquery', 'layer', 'form', 'upload'], function () {
                     layer.closeAll('page');
                     setTimeout(function () {
                         //window.location.href = '/';
+                        location.reload();
                         parent.layer.close(index);
                     }, 1000);
                 } else {

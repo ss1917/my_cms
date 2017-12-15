@@ -158,7 +158,7 @@ class TempDetailsHandler(BaseHandler):
         temp_id = self.get_argument('temp_id', default=None, strip=True)
         temp_list = []
         if not temp_id:
-            self.write(dict(status=-1, msg='ID不能为空'))
+            self.write(dict(status=-1, msg='模板ID不能为空'))
             return
 
         with DBContext('readonly') as session:

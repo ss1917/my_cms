@@ -16,7 +16,7 @@ layui.use(['layer', 'form', 'table', 'common'], function () {
             }, {
                 field: 'args_name', width: 200, title: '名称', align: 'center'
             }, {
-                field: 'args_self', width: 250, title: '参数', align: 'center',edit: 'text'
+                field: 'args_self', width: 250, title: '参数', align: 'center', edit: 'text'
             }, {
                 field: 'creator', width: 100, title: '创建人', align: 'center'
             }, {
@@ -110,10 +110,14 @@ layui.use(['layer', 'form', 'table', 'common'], function () {
                 type: 2,
                 content: '/static/backstage/templates/task/args_add.html',
                 area: ['320px', '195px'],
-                maxmin: true
+                anim: 1,
+                title: '新建参数',
+                maxmin: true,
+                end: function () {
+                    table.reload('argsTables')
+                }
             });
             layer.full(index);
-            table.reload("argsTables");
         },
         search: function () {
             var name_search = $('#name_search');

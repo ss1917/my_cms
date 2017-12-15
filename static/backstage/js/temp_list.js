@@ -79,7 +79,7 @@ layui.use(['layer', 'form', 'table', 'common'], function () {
             }]
 
         ],
-        url: "/v1/task/details/" ,
+        url: "/v1/task/details/",
         page: false,
         even: true,
         height: 'full-150',
@@ -199,7 +199,7 @@ layui.use(['layer', 'form', 'table', 'common'], function () {
                         layer.msg(data.msg, {icon: 1, time: 1000});
                         layer.closeAll('page');
                         setTimeout(function () {
-                            parent.location.reload();
+                            location.reload();
                         }, 1000);
                     } else {
                         layer.msg(data.msg, {icon: 2, time: 1000});

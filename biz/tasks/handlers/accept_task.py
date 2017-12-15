@@ -42,19 +42,19 @@ class AcceptTaskHandler(BaseHandler):
 
     def post(self, *args, **kwargs):
         data = json.loads(self.request.body.decode("utf-8"))
-        ### 首先判断参数是否完整（temp_id，hosts）必填
+        ### 首先判断参数是否完整（temp_id，hosts,task_name）必填
         exec_time = data.get('exec_time', '2038-10-25 14:00:00')
         temp_id = str(data.get('temp_id', None))
-        task_name = data.get('task_name', '其他')
+        task_name = data.get('task_name', None)
         task_type = data.get('task_type', None)
         submitter = data.get('submitter', self.get_current_user().decode("utf-8"))  ### 应根据登录的用户
         executor = data.get('executor', '')  ### 审批人可以为空
         args = data.get('args', '')  ### 参数，可以为空
         hosts = data.get('hosts', None)  ### 执行主机，不能为空
         details = data.get('details', '')  ### 任务描述
-        if not hosts or not temp_id:
+        if not hosts or not temp_id or not task_name:
             json_data = {
-                'status': '2',
+                'status': -2,
                 'msg': '主机和模板ID不能为空'
             }
             self.write(json_data)

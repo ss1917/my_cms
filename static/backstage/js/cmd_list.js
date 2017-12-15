@@ -116,10 +116,12 @@ layui.use(['layer', 'form', 'table', 'common'], function () {
                 type: 2,
                 content: '/static/backstage/templates/task/cmd_add.html',
                 area: ['320px', '195px'],
-                maxmin: true
+                maxmin: true,
+                end: function () {
+                    table.reload('cmdTables')
+                }
             });
             layer.full(index);
-            table.reload("cmdTables");
         },
         search: function () {
             var name_search = $('#name_search');

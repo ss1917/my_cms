@@ -1,31 +1,49 @@
-[group:task_center]
-programs=exec_task,accept_api
+```
+[group:yunwei_task]
+programs=exec_task,acceptance,mg
 
-[program:accept_api]
-command=python3 startup.py --service=accept_api --port=91%(process_num)02d
+[program:acceptance]
+command=python3 startup.py --service=acceptance --port=91%(process_num)02d
 process_name=%(program_name)s_%(process_num)02d
-numprocs=2
-directory=/var/www
-user=www
+numprocs=3
+directory=/home/dev/python_dev/my_cms
+user=root
 autostart = true
 autorestart=true
 redirect_stderr=true
-stdout_logfile=/var/log/supervisor/accept_api.log
+stdout_logfile=/var/log/supervisor/acceptance.log
 loglevel=info
-logfile_maxbytes=50MB
+logfile_maxbytes=100MB
 logfile_backups=3
+```
 
+```
+[program:mg]
+command=python3 startup.py --service=mg --port=90%(process_num)02d
+process_name=%(program_name)s_%(process_num)02d
+numprocs=3
+directory=/home/dev/python_dev/my_cms
+user=root
+autostart = true
+autorestart=true
+redirect_stderr=true
+stdout_logfile=/var/log/supervisor/mg.log
+loglevel=info
+logfile_maxbytes=100MB
+logfile_backups=3
+```
 
+```
 [program:exec_task]
 command=python3 startup.py --service=exec_task
 process_name=%(program_name)s_%(process_num)02d
-numprocs=50
-directory=/var/www
-user=www
+numprocs=20
+directory=/home/dev/python_dev/my_cms
+user=root
 autostart = true
 autorestart=true
 redirect_stderr=true
 stdout_logfile=/var/log/supervisor/exec_task.log
 loglevel=info
-logfile_maxbytes=50MB
-logfile_backups=3
+logfile_maxbytes=100MB
+```

@@ -1,10 +1,14 @@
 ```
-upstream  cms{
-    server  127.0.0.1:8081;
+upstream  mg{
+    server  127.0.0.1:9000;
+    server  127.0.0.1:9001;
+    server  127.0.0.1:9002;
 }
 
-upstream  sso{
-    server  127.0.0.1:38014;
+upstream  task{
+    server  127.0.0.1:9100;
+    server  127.0.0.1:9101;
+    server  127.0.0.1:9102;
 }
 
 
@@ -53,15 +57,17 @@ server
                 proxy_redirect off;
                 proxy_set_header X-Real-IP $remote_addr;
                 proxy_set_header X-Scheme $scheme;
-                proxy_pass http://cms;
+                proxy_pass http://mg;
         }
 
-        location /v2/ {
+        location /v1/task/ {
                 proxy_pass_header cms.test.com;
                 proxy_set_header Host $http_host;
                 proxy_redirect off;
                 proxy_set_header X-Real-IP $remote_addr;
-                proxy_pass http://sso;
+                proxy_set_header X-Scheme $scheme;
+                proxy_pass http://task;
         }
+
 }
 ```

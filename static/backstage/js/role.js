@@ -143,7 +143,10 @@ layui.use(['layer', 'form', 'table', 'common'], function () {
                 type: 2,
                 content: '/static/backstage/html/user_manage/role_add.html',
                 area: ['320px', '195px'],
-                maxmin: true
+                maxmin: true,
+                end: function () {
+                    table.reload('roleTables')
+                }
             });
             layer.full(index);
         },

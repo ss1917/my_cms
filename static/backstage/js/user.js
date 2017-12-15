@@ -156,7 +156,10 @@ layui.use(['layer', 'form', 'table', 'common'], function () {
                 type: 2,
                 content: '/static/backstage/html/user_manage/user_add.html',
                 area: ['320px', '195px'],
-                maxmin: true
+                maxmin: true,
+                end: function () {
+                    table.reload('userTables')
+                }
             });
             layer.full(index);
         },
