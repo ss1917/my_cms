@@ -2,7 +2,7 @@
 # -*-coding:utf-8-*-
 '''
 Author : SS
-date   : 2017-11-11 12:48:43
+date   : 2017年12月29日14:43:24
 role   : 集中化管理工具的使用
 '''
 
@@ -28,7 +28,7 @@ class SaltApi:
     初始化获得token
     """
 
-    def __init__(self, url='https://salt-ss-dev.shinezone.com/', username="saltapi", password="shenshuo"):
+    def __init__(self, url='https://127.0.0.1:8001/', username="saltapi", password="shenshuo"):
         self.__url = url
         self.__username = username
         self.__password = password
@@ -86,9 +86,9 @@ class SaltApi:
                 break
             else:
                 t += 5
-            result2 = self.look_jid(jid)
-            for i in result2.keys():
-                return result2[i]['retcode'], result2[i]['stdout'], result2[i]['stderr']
+            result = self.look_jid(jid)
+            for i in result.keys():
+                return result[i]['retcode'], result[i]['stdout'], result[i]['stderr']
 
 
 if __name__ == '__main__':

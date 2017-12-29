@@ -55,7 +55,7 @@ layui.use(['layer', 'form', 'table', 'common'], function () {
             [{
                 field: '', width: 60, title: ''
             }, {
-                field: 'exec_ip', width: 120, title: '执行主机', align: 'center'
+                field: 'exec_ip', width: 180, title: '执行主机', align: 'center'
             }, {
                 field: 'task_group', width: 80, title: '执行组', align: 'center'
             }, {

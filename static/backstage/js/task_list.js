@@ -14,9 +14,9 @@ layui.use(['layer', 'form', 'table', 'common', 'element',], function () {
                 field: 'list_id', width: 60, title: 'ID', sort: true,
                 // fixed: true
             }, {
-                field: 'task_name', width: 150, title: '任务名称', align: 'center', templet: '#checkTpl'
+                field: 'task_name', width: 150, title: '名称', align: 'center', templet: '#checkTpl'
             }, {
-                field: 'task_type', width: 100, title: '任务类型', align: 'center',
+                field: 'task_type', width: 200, title: '任务类型', align: 'center',
             }, {
                 field: 'creator', width: 100, title: '提交人', align: 'center',
             }, {
@@ -48,13 +48,13 @@ layui.use(['layer', 'form', 'table', 'common', 'element',], function () {
                 field: 'list_id', width: 60, title: 'ID', sort: true,
                 // fixed: true
             }, {
-                field: 'task_name', width: 150, title: '任务名称', align: 'center', templet: '#checkTpl'
+                field: 'task_name', width: 150, title: '名称', align: 'center', templet: '#checkTpl'
             }, {
-                field: 'task_type', width: 100, title: '任务类型', align: 'center'
+                field: 'task_type', width: 200, title: '任务类型', align: 'center'
             }, {
-                field: 'creator', width: 80, title: '提交人', align: 'center'
+                field: 'creator', width: 100, title: '提交人', align: 'center'
             }, {
-                field: 'executor', width: 80, title: '接手人', align: 'center'
+                field: 'executor', width: 100, title: '接手人', align: 'center'
             }, {
                 field: 'schedule', width: 80, title: '进度', align: 'center', templet: '#scheduleTpl', unresize: true,
             }, {

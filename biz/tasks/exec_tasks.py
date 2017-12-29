@@ -26,6 +26,10 @@ class MyExecute:
         self.flow_id = str(flow_id)
         self.group_id = group_id
         self.exec_method = my_settings['exec_method']
+        self.salt_api = my_settings['salt_api']
+        self.salt_username = my_settings['salt_username']
+        self.salt_password = my_settings['salt_password']
+        self.salt_timeout = my_settings['salt_timeout']
         with DBContext('readonly') as session:
             taskinfo = session.query(TaskList.hosts, TaskList.args).filter(TaskList.list_id == self.flow_id).one()
 
@@ -125,8 +129,9 @@ class MyExecute:
                 status = -1
                 stderr = str(e)
         else:
-            my_salt = SaltApi()
-            req = my_salt.run(salt_client=real_ip, salt_method='cmd.run_all', salt_params=my_cmd, timeout=1800)
+            my_salt = SaltApi(self.salt_api, self.salt_username, self.salt_password)
+            req = my_salt.run(salt_client=real_ip, salt_method='cmd.run_all', salt_params=my_cmd,
+                              timeout=self.salt_timeout)
             status, stdout, stderr = req[0], req[1], req[2]
 
         if status == 0:

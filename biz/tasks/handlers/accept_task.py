@@ -42,7 +42,6 @@ class AcceptTaskHandler(BaseHandler):
 
     def post(self, *args, **kwargs):
         data = json.loads(self.request.body.decode("utf-8"))
-        print(data)
         ### 首先判断参数是否完整（temp_id，hosts,task_name,submitter）必填
         exec_time = data.get('exec_time', '2038-10-25 14:00:00')
         temp_id = str(data.get('temp_id', None))

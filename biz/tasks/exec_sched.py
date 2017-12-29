@@ -28,7 +28,6 @@ class DealMQ(MessageQueueBase):
                                      queue_name='deal_task_sched')
 
     def my_run(self, flow_id, group_id):
-        print('xxx',flow_id, group_id)
         ME = MyExecute(flow_id, group_id)
         ME.exec_thread()
 
@@ -44,7 +43,6 @@ class DealMQ(MessageQueueBase):
         #####取所有IP###
         for i in all_gid:
             i = i[0]
-            print(i)
             if i:
                 threads.append(multiprocessing.Process(target=self.my_run, args=(lid, i,)))
         Logger.info("current has %d threads group execution " % len(threads))

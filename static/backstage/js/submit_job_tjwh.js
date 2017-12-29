@@ -47,14 +47,11 @@ layui.use(['layer', 'form', 'table', 'laydate', 'common'], function () {
 
     form.on('submit(submit)', function (data) {
         $.ajax({
-            url: "/v1/jobs/update/",
+            url: "/v1/jobs/tjwh/",
             type: 'POST',
             data: JSON.stringify({
                 "project": project,
                 "zones": data.field.zones,
-                "version": data.field.version,
-                "sql": data.field.sql,
-                "stop": data.field.stop,
                 "details": data.field.details,
                 "stime": data.field.stime,
             }),

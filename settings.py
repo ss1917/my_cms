@@ -21,6 +21,10 @@ template_path = os.path.join(ROOT_DIR, "static", "backstage")
 static_path = os.path.join(ROOT_DIR, "static")
 accept_task_url = 'http://cms.test.com/v1/task/accept/'
 exec_method = 'salt'
+salt_api = 'https://salt-ss-dev.shinezone.com/'
+salt_username = 'saltapi'
+salt_password = 'shenshuo'
+salt_timeout = 1800
 expire_seconds = 365 * 24 * 60 * 60
 
 DEFAULT_DB_DBHOST = '172.16.0.223'
@@ -64,6 +68,10 @@ settings = dict(
     app_name='zhi',
     accept_task_url=accept_task_url,
     exec_method=exec_method,
+    salt_api=salt_api,
+    salt_username=salt_username,
+    salt_password=salt_password,
+    salt_timeout=salt_timeout,
     databases={
         const.DEFAULT_DB_KEY: {
             const.DBHOST_KEY: DEFAULT_DB_DBHOST,
