@@ -149,7 +149,8 @@ class TaskSchedHandler(BaseHandler):
             with DBContext('readonly') as session:
                 sched_info = session.query(TaskSched).filter(TaskSched.list_id == list_id,
                                                              TaskSched.task_group == group,
-                                                             TaskSched.exec_ip == hosts)
+                                                             TaskSched.exec_ip == hosts).order_by(
+                    TaskSched.task_group, TaskSched.task_level).all()
             for msg in sched_info:
                 data_dict = model_to_dict(msg)
                 sched_list.append(data_dict)
@@ -157,7 +158,8 @@ class TaskSchedHandler(BaseHandler):
             return
 
         with DBContext('readonly') as session:
-            sched_info = session.query(TaskSched).filter(TaskSched.list_id == list_id)
+            sched_info = session.query(TaskSched).filter(TaskSched.list_id == list_id).order_by(
+                TaskSched.task_group, TaskSched.task_level).all()
             task_info = session.query(TaskList).filter(TaskList.list_id == list_id).first()
             all_group = session.query(TaskSched.task_group).filter(TaskSched.list_id == list_id).group_by(
                 TaskSched.task_group).all()
@@ -170,13 +172,14 @@ class TaskSchedHandler(BaseHandler):
         task_time = str(task_info.stime)
 
         for g in all_group:
-            hosts = task_hosts.get(str(g[0]), '127.0.0.1').split(',')
+            hosts = task_hosts.get(g[0], '10.10.10.10').split(',')
             hosts_status = {}
             for h in hosts:
                 with DBContext('readonly') as session:
                     slist = session.query(TaskSched.task_status).filter(TaskSched.list_id == list_id,
                                                                         TaskSched.task_group == g[0],
-                                                                        TaskSched.exec_ip == h).all()
+                                                                        TaskSched.exec_ip == h).order_by(
+                        TaskSched.task_group, TaskSched.task_level).all()
 
                 status_list = []
                 for s in slist:
@@ -248,7 +251,8 @@ class TaskSchedHandler(BaseHandler):
         elif task_handle == "hand":
             ### 手动审批
             with DBContext('default') as session:
-                session.query(TaskSched).filter(TaskSched.sched_id == sched_id).update({TaskSched.task_status: '1'})
+                session.query(TaskSched).filter(TaskSched.sched_id == sched_id).update(
+                    {TaskSched.task_status: '1', TaskSched.trigger: 'pass_hand'})
                 session.commit()
             self.write(dict(status=0, msg='手动审核成功'))
             return

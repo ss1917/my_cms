@@ -162,6 +162,8 @@ class TempDetailsHandler(BaseHandler):
             return
 
         with DBContext('readonly') as session:
+            print(session.query(TempDetails).filter(TempDetails.temp_id == temp_id).order_by(TempDetails.group,
+                                                                                                   TempDetails.level))
             temp_info = session.query(TempDetails).filter(TempDetails.temp_id == temp_id).order_by(TempDetails.group,
                                                                                                    TempDetails.level).all()
 
@@ -180,11 +182,11 @@ class TempDetailsHandler(BaseHandler):
     @auth_login_redirect
     def put(self, *args, **kwargs):
         data = json.loads(self.request.body.decode("utf-8"))
-        group = data.get('group', None)
-        level = data.get('level', None)
-        trigger = data.get('trigger', '')
-        args = data.get('args', '')
-        exec_user = data.get('exec_user', 'root')
+        group = str(data.get('group', None))
+        level = str(data.get('level', None))
+        trigger = str(data.get('trigger', ''))
+        args = str(data.get('args', ''))
+        exec_user = str(data.get('exec_user', 'root'))
         did = str(data.get('id', None))
 
         if not did or not group or not level:

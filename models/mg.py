@@ -29,7 +29,7 @@ class OperationRecord(Base):
     nickname = Column('nickname', String(50))
     method = Column('method', String(10))
     uri = Column('uri', String(150))
-    data = Column('data', String(200))
+    data = Column('data', String(500))
     ctime = Column('ctime', DateTime(), default=datetime.now, onupdate=datetime.now)
 
 

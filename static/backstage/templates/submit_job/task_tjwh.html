@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>下拉多选</title>
+    <link rel="stylesheet" href="layui/css/layui.css" media="all"/>
+    <link rel="stylesheet" type="text/css" href="../../../common/css/gobal.css" media="all">
+    <link rel="stylesheet" type="text/css" href="../../../common/css/animate.css" media="all">
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" media="all">
+    <link rel="stylesheet" href="css/public.css" media="all"/>
+</head>
+<body class="childrenBody">
+<div class="layui-fluid larry-wrapper">
+    <div class="layui-row  animated bounceIn">
+        <div class="layui-col-lg12 layui-col-md12 layui-col-sm12 layui-col-xs12">
+            <fieldset class="layui-elem-field layui-field-title site-title">
+                <legend><a name="color-design">例行停机</a></legend>
+            </fieldset>
+
+            <form class="layui-form" action="">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">选择大区</label>
+                    <div class="layui-input-block">
+                        <select lay-filter="zones" multiple name="zones" lay-verify="required">
+                            <option value="">请选择您要执行的大区，或者分组</option>
+                            <option value="1">全部</option>
+                            <option value="1000">逻辑一区</option>
+                            <option value="1001">逻辑二区</option>
+                            <option value="2">唱歌</option>
+                            <option value="3">爬山</option>
+                            <option value="4">游戏</option>
+                            <option value="5">台球</option>
+                            <option value="6">阅读</option>
+                            <option value="7">看电影</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">备注详情</label>
+                    <div class="layui-input-block">
+                        <textarea name="desc" placeholder="请输入备注详情" class="layui-textarea"
+                                  lay-verify="required"></textarea>
+                    </div>
+                </div>
+
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">停机时间</label>
+                    <div class="layui-input-block">
+                        <input type="text" class="layui-input" id="date1" name="stime" lay-verify="required">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit="" lay-filter="submit" data-type="submit">立即提交</button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="layui/layui.js"></script>
+<script type="text/javascript" src="../../js/common.js"></script>
+<script type="text/javascript" src="../../js/submit_job.js"></script>
+</body>
+</html>

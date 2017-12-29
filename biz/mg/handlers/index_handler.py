@@ -24,19 +24,18 @@ class IndexHandler(BaseHandler):
 class PanelHandler(BaseHandler):
     @auth_login_redirect
     def get(self, *args, **kwargs):
-        self.render('html/panel/personal.html')
+        self.write(dict(status=0,msg='干啥'))
 
     @auth_login_redirect
-    def patch(self, *args, **kwargs):
-        greeting = self.get_argument('greeting', 'Hello')
-        self.render('html/panel/password.html')
+    def put(self, *args, **kwargs):
+        self.write(dict(status=0, msg='干啥'))
 
 
 class PasswordHandler(BaseHandler):
     @auth_login_redirect
     def get(self, *args, **kwargs):
         username = self.get_current_user()
-        self.render('html/panel/password.html', username=username)
+        self.write(dict(status=0, msg='成功',data=username))
 
     @auth_login_redirect
     def patch(self, *args, **kwargs):

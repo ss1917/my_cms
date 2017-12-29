@@ -16,13 +16,13 @@ layui.use(['layer', 'form', 'table', 'laydate', 'common'], function () {
             [{
                 field: 'username', width: 150, title: '用户名', align: 'center',
             }, {
-                field: 'nickname', width: 110, title: '昵称', align: 'center',
+                field: 'nickname', width: 120, title: '昵称', align: 'center',
             }, {
                 field: 'method', width: 100, title: '请求方法', align: 'center',
             }, {
                 field: 'uri', width: 250, title: '请求URI', align: 'center',
             }, {
-                field: 'data', width: 220, title: '请求数据', align: 'center',
+                field: 'data', width: 400, title: '请求数据', align: 'center',
             }, {
                 field: 'ctime', width: 180, title: '时间', align: 'center',
             }]

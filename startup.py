@@ -13,7 +13,7 @@ from settings import settings as app_settings
 from biz.tasks.program import Application as DealApp
 from biz.tasks.applications import Application as AcceptApp
 from biz.mg.applications import Application as MgApp
-from biz.publish_code.applications import Application as PublishApp
+from biz.submit_job.applications import Application as PublishApp
 
 define("service", default='control_api', help="start service flag", type=str)
 class MyProgram(MainProgram):
@@ -22,7 +22,7 @@ class MyProgram(MainProgram):
         settings = app_settings
         if service == 'mg':
             self.__app = MgApp(**settings)
-        if service == 'publish':
+        if service == 'submit_jobs':
             self.__app = PublishApp(**settings)
         if service == 'acceptance':
             self.__app = AcceptApp(**settings)

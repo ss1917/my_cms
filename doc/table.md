@@ -13,7 +13,7 @@ CREATE TABLE `operation_record` (
   `nickname` varchar(50),
   `method` varchar(10) NOT NULL,
   `uri` varchar(150) NOT NULL,
-  `data` varchar(200) NOT NULL,
+  `data` varchar(500) NOT NULL,
   `ctime` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
@@ -36,7 +36,7 @@ CREATE TABLE `users` (
   `ctime` datetime DEFAULT NULL,
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
-insert into users value(2,'ss','xxx','沈硕','111@qq.com','15618718060','kf','10086','开发部','222','0','','','');
+insert into users value(2,'ss','7d491c440ba46ca20fde0c5be1377aec','沈硕','111@qq.com','15618718060','kf','10086','国务院','222','0','192.168.1.111','2017-12-21 14:26:04','2017-12-21 14:26:04');
 
 ##### 角色表
 CREATE TABLE `roles` (
@@ -46,7 +46,7 @@ CREATE TABLE `roles` (
   `ctime` datetime DEFAULT NULL,
   PRIMARY KEY (`role_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
-insert into roles value(2,'test','0','');
+insert into roles value(2,'test','0','2017-12-21 14:26:04');
 
 ### 用户角色关联表
 CREATE TABLE `user_roles` (
@@ -58,7 +58,7 @@ CREATE TABLE `user_roles` (
   `ctime` datetime DEFAULT NULL,
   PRIMARY KEY (`user_role_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
-insert into user_roles value(2,'2','2','0','','');
+insert into user_roles value(2,'2','2','0','2017-12-21 14:26:04','2017-12-21 14:26:04');
 
 ### 权限表
 CREATE TABLE `functions` (
@@ -110,31 +110,31 @@ insert into role_functions value(2,'2','2','0','','');
 CREATE TABLE `task_log` (
   `log_id` int(11) NOT NULL AUTO_INCREMENT,
   `list_id` varchar(11) NOT NULL,
-  `task_group` varchar(5) NOT NULL,
-  `task_level` varchar(5) NOT NULL,
-  `exec_ip` char(15) NOT NULL,
+  `task_group` int(11) NOT NULL,
+  `task_level` int(11) NOT NULL,
+  `exec_ip` varchar(50) NOT NULL,
   `task_log` varchar(250) NOT NULL,
   `log_time` datetime DEFAULT NULL,
   PRIMARY KEY (`log_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 ##### 任务调度表
 
 CREATE TABLE `task_sched` (
   `sched_id` int(11) NOT NULL AUTO_INCREMENT,
   `list_id` varchar(11) NOT NULL,
-  `task_group` varchar(5) NOT NULL,
-  `task_level` varchar(5) NOT NULL,
+  `task_group` int(11) NOT NULL,
+  `task_level` int(11) NOT NULL,
   `task_name` varchar(25) NOT NULL,
   `task_cmd` varchar(128) NOT NULL,
   `task_args` varchar(128) NOT NULL,
   `trigger` varchar(10) NOT NULL,
   `exec_user` varchar(20) NOT NULL,
-  `forc_ip` char(15) NOT NULL,
-  `exec_ip` char(15) NOT NULL,
+  `forc_ip` varchar(50) NOT NULL,
+  `exec_ip` varchar(50) NOT NULL,
   `task_status` varchar(5) NOT NULL,
   PRIMARY KEY (`sched_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 ##### 命令表
 
@@ -143,12 +143,12 @@ CREATE TABLE `task_sched` (
   `cmd_name` varchar(25) NOT NULL,
   `command` varchar(250) NOT NULL,
   `args` varchar(250) NOT NULL,
-  `forc_ip` char(15) NOT NULL,
+  `forc_ip` varchar(50) NOT NULL,
   `creator` varchar(30) NOT NULL,
   `ctime` datetime DEFAULT NULL,
   `utime` datetime DEFAULT NULL,
   PRIMARY KEY (`cmd_id`)
-) DEFAULT CHARSET=utf8;
+)  ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 
 ##### 模板列表
@@ -160,7 +160,7 @@ CREATE TABLE `task_sched` (
   `ctime` datetime DEFAULT NULL,
   `utime` datetime DEFAULT NULL,
   PRIMARY KEY (`temp_id`)
-) DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 
 #####  模板详情
@@ -168,19 +168,18 @@ CREATE TABLE `task_sched` (
  CREATE TABLE `temp_details` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `temp_id` varchar(11) NOT NULL,
-  `group` varchar(30) NOT NULL,
-  `level` varchar(30) NOT NULL,
+  `group` int(11) NOT NULL,
+  `level` int(11) NOT NULL,
   `cmd_name` varchar(30) NOT NULL,
   `command` varchar(128) NOT NULL,
   `args` varchar(128) NOT NULL,
   `trigger` varchar(10) NOT NULL,
   `exec_user` varchar(20) NOT NULL,
-  `exec_ip` char(15) NOT NULL,
-  `forc_ip` char(15) NOT NULL,
+  `forc_ip` varchar(50) NOT NULL,
   `creator` varchar(30) NOT NULL,
   `utime` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 ##### 模板列表
 
@@ -191,11 +190,11 @@ CREATE TABLE `task_sched` (
   `creator` varchar(35) NOT NULL,
   `utime` datetime DEFAULT NULL,
   PRIMARY KEY (`args_id`)
-) DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 ```
 ####测试数据
 ```
-insert into temp_list values(1,'ceshi1','ss','',''),(2,'ceshi2','ss','','');
+insert into temp_list values(1,'ceshi1','ss','2017-12-21 14:26:04','2017-12-21 14:26:04'),(2,'ceshi2','ss','2017-12-21 14:26:04','2017-12-21 14:26:04');
 insert into temp_details value(4,'2','1','2','测试2','echo hello && sleep 10 && ls /tmp','','','root','127.0.0.1','','',''),(5,'2','1','3','测试3','echo arg01 && sleep 10 && ls /tmp','','','root','127.0.0.1','','','');
 insert into args_list values(1,'版本','VERSION','ss',''),(2,'环境','ENVI','ss','');
 insert into cmd_list value(2,'测试一下2','echo this is a test2','','','','',''),(3,'测试一下3','echo this is a test3','','','','','');

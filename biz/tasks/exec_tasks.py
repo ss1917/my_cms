@@ -7,26 +7,29 @@ role   : exec tasks
 ### 任务状态标记 0:新建,1:等待,2:运行中,3:完成,4:错误,5:手动
 ### 任务组按顺序触发，任务按预设触发，默认顺序执行
 '''
-import fire, sys
+import fire
+import sys
 import multiprocessing
 from ast import literal_eval
-import time, re
+import time
 import paramiko
 
 sys.path.append("../../")
+from settings import settings as my_settings
+from libs.centralization import SaltApi
 from models.models import TaskList, TaskSched, TaskLog
 from libs.db_context import DBContext
 
 
-class MyExecute():
+class MyExecute:
     def __init__(self, flow_id, group_id):
         self.flow_id = str(flow_id)
-        self.group_id = str(group_id)
+        self.group_id = group_id
+        self.exec_method = my_settings['exec_method']
         with DBContext('readonly') as session:
             taskinfo = session.query(TaskList.hosts, TaskList.args).filter(TaskList.list_id == self.flow_id).one()
 
         self.all_exec_ip = literal_eval(taskinfo[0]).get(self.group_id, '')
-        print(self.all_exec_ip)
         self.all_args_info = literal_eval(taskinfo[1])
 
     ### 检查订单是否已经完成，防止重复执行
@@ -96,14 +99,6 @@ class MyExecute():
 
     ### 执行任务函数
     def exec_task(self, **info):
-        mycmd = info.get('task_cmd', '') + ' ' + info.get('task_args', '')
-        myssh = paramiko.SSHClient()
-        myssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        if info.get('forc_ip', '') != '':
-            real_ip = info.get('forc_ip', '127.0.0.1')
-        else:
-            real_ip = info.get('exec_ip', '127.0.0.1')
-
         ### 修改状态为运行中
         with DBContext('default') as session:
             session.query(TaskSched).filter(TaskSched.list_id == self.flow_id, TaskSched.task_group == self.group_id,
@@ -111,14 +106,28 @@ class MyExecute():
                                             TaskSched.exec_ip == info['exec_ip']).update({TaskSched.task_status: '2'})
             session.commit()
 
-        try:
-            myssh.connect(hostname=real_ip, username=info.get('exec_user', 'root'), port=info.get('exec_port', 22),
-                          timeout=15)
-            stdin, stdout, stderr = myssh.exec_command(mycmd, bufsize=-1, timeout=1800)
-            status = stdout.channel.recv_exit_status()
-        except Exception as e:
-            status = -1
-            stderr = str(e)
+        if info.get('forc_ip', '') != '':
+            real_ip = info.get('forc_ip', '')
+        else:
+            real_ip = info.get('exec_ip', '')
+
+        my_cmd = info.get('task_cmd', '') + ' ' + info.get('task_args', '')
+        if self.exec_method != 'salt':
+            myssh = paramiko.SSHClient()
+            myssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+            try:
+                myssh.connect(hostname=real_ip, username=info.get('exec_user', 'root'), port=info.get('exec_port', 22),
+                              timeout=15)
+                stdin, stdout, stderr = myssh.exec_command(my_cmd, bufsize=-1, timeout=1800)
+                status = stdout.channel.recv_exit_status()
+            except Exception as e:
+                status = -1
+                stderr = str(e)
+        else:
+            my_salt = SaltApi()
+            req = my_salt.run(salt_client=real_ip, salt_method='cmd.run_all', salt_params=my_cmd, timeout=1800)
+            status, stdout, stderr = req[0], req[1], req[2]
 
         if status == 0:
             real_status = '3'
@@ -143,12 +152,20 @@ class MyExecute():
                 session.commit()
         else:
             with DBContext('default') as session:
-                for i in real_stdout.readlines():
-                    i = i.replace('\n', '')
-                    if i:
-                        session.add(
-                            TaskLog(list_id=self.flow_id, task_group=self.group_id, task_level=info['task_level'],
-                                    exec_ip=info['exec_ip'], task_log=i))
+                if self.exec_method != 'salt':
+                    for i in real_stdout.readlines():
+                        i = i.replace('\n', '')
+                        if i:
+                            session.add(
+                                TaskLog(list_id=self.flow_id, task_group=self.group_id, task_level=info['task_level'],
+                                        exec_ip=info['exec_ip'], task_log=i))
+                else:
+                    for i in real_stdout.split('\n'):
+                        i = i.replace('\n', '')
+                        if i:
+                            session.add(
+                                TaskLog(list_id=self.flow_id, task_group=self.group_id, task_level=info['task_level'],
+                                        exec_ip=info['exec_ip'], task_log=i))
 
                 session.commit()
                 time.sleep(1)
@@ -183,7 +200,7 @@ class MyExecute():
                                                                  == self.group_id, TaskSched.exec_ip == ip).all()
 
                 for l in level_info:
-                    level = l.task_level.replace('\n', '')
+                    level = l.task_level
                     level_list.append(level)
                     level_status[level] = l.task_status
                 level_list = sorted(level_list)
@@ -222,15 +239,13 @@ class MyExecute():
     ### 根据执行主机，并发执行任务调度
     def exec_thread(self):
         threads = []
-        #####取所有IP###
+        #####取所有主机###
         ### ip以字符串格式传入以,分割
         for ip in self.all_exec_ip.split(','):
-            ip = ip.replace('\n', '').strip()
-
             ###并发调用execute函数
-            ip_have = re.search(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b', ip)
-            if ip_have:
-                threads.append(multiprocessing.Process(target=self.exec_main, args=(ip,)))
+            # ip_have = re.search(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b', ip)
+            # if ip_have:
+            threads.append(multiprocessing.Process(target=self.exec_main, args=(ip,)))
 
         print("current has {0} threads executive task list-{1} group-{2}".format(len(threads), self.flow_id,
                                                                                  self.group_id))

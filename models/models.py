@@ -31,8 +31,6 @@ class TaskList(Base):
     args = Column('args', Text())              ### 参数
     details = Column('details', Text())        ### 详情
     descript = Column('descript', Text())      ### 描述、备注
-    #mark = Column('mark', String(10))          ### 标记
-    #memo = Column('memo', String(10))          ### 备注
     creator = Column('creator', String(50))    ### 创建者
     executor = Column('executor', String(50))  ### 执行者
     status = Column('status', String(5))       ### 任务状态
@@ -49,15 +47,15 @@ class TaskSched(Base):
     ### 任务根据此表执行
     sched_id = Column('sched_id', Integer, primary_key=True, autoincrement=True)
     list_id = Column('list_id', String(11))
-    task_group = Column('task_group', String(5))
-    task_level = Column('task_level', String(5))
+    task_group = Column('task_group', Integer)
+    task_level = Column('task_level', Integer)
     task_name = Column('task_name', String(30))
     task_cmd = Column('task_cmd', String(250))
     task_args = Column('task_args', String(250))
     trigger = Column('trigger', String(10))
     exec_user = Column('exec_user', String(30))
-    forc_ip = Column('forc_ip', String(18))
-    exec_ip = Column('exec_ip', String(18))
+    forc_ip = Column('forc_ip', String(50))
+    exec_ip = Column('exec_ip', String(50))
     task_status = Column('task_status', String(5))
 
 class TaskLog(Base):
@@ -66,9 +64,9 @@ class TaskLog(Base):
     ### 任务日志表
     log_id = Column('log_id', Integer, primary_key=True, autoincrement=True)
     list_id = Column('list_id', String(11))
-    exec_ip = Column('exec_ip', String(18))
-    task_group = Column('task_group', String(5))
-    task_level = Column('task_level', String(5))
+    exec_ip = Column('exec_ip', String(50))
+    task_group = Column('task_group', Integer)
+    task_level = Column('task_level', Integer)
     task_log = Column('task_log', String(250))
     log_time = Column('log_time', DateTime(), default=datetime.now)
 
@@ -77,7 +75,7 @@ class TaskMonitor(Base):
 
     ### 任务监控
     list_id = Column('list_id', Integer, primary_key=True, autoincrement=True)
-    call_level = Column('call_level', String(5))
+    call_level = Column('call_level', Integer)
     call_info = Column('call_info', String(500))
     ctime = Column('ctime', DateTime(), default=datetime.now)
 
@@ -89,7 +87,7 @@ class CmdList(Base):
     cmd_name   = Column('cmd_name', String(25),unique=True)
     command = Column('command',String(250))
     args = Column('args', String(250))
-    forc_ip = Column('forc_ip', String(250))
+    forc_ip = Column('forc_ip', String(50))
     creator = Column('creator', String(30))
     ctime = Column('ctime', DateTime(), default=datetime.now)
     utime = Column('utime', DateTime(), default=datetime.now, onupdate=datetime.now)
@@ -111,14 +109,14 @@ class TempDetails(Base):
     ### 执行模板详情
     id = Column('id', Integer, primary_key=True, autoincrement=True)
     temp_id = Column('temp_id', String(11))
-    group = Column('group', String(5))
-    level = Column('level', String(5))
+    group = Column('group', Integer)
+    level = Column('level', Integer)
     cmd_name = Column('cmd_name', String(25))
     command = Column('command', String(250))
     args = Column('args', String(250))
     trigger = Column('trigger', String(10))
     exec_user = Column('exec_user', String(20))
-    forc_ip = Column('forc_ip', String(15))
+    forc_ip = Column('forc_ip', String(50))
     creator = Column('creator', String(30))
     utime = Column('utime', DateTime(), default=datetime.now, onupdate=datetime.now)
 

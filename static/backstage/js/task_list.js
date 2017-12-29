@@ -38,10 +38,10 @@ layui.use(['layer', 'form', 'table', 'common', 'element',], function () {
         even: true,
         height: 'full-150',
         id: 'tasklistTables',
-        limit: 10,
+        limit: 20,
     });
 
-    var tableIns2 = table.render({
+    var tableIns = table.render({
         elem: '#histTables',
         cols: [
             [{
@@ -69,19 +69,19 @@ layui.use(['layer', 'form', 'table', 'common', 'element',], function () {
         url: '/v1/task/list/?history=history',
         page: true,
         even: true,
-        height: 'full-150',
+        //height: 'full-150',
         id: 'histTables',
-        limit: 30,
+        limit: 20,
     });
 
-
+    /*
     $("[name=publishTables]").click(function () {
         table.reload("publishTables");
     });
     $("[name=histTables]").click(function () {
         table.reload("histTables");
     });
-
+    */
 
     //监听工具条
     table.on('tool(tasklistTables)', function (obj) {

@@ -53,17 +53,17 @@ layui.use(['layer', 'form', 'table', 'common'], function () {
         elem: '#taskdetailsTables',
         cols: [
             [{
-                field: '', width: 60, title: '', sort: true,
+                field: '', width: 60, title: ''
             }, {
-                field: 'exec_ip', width: 120, title: '执行主机', align: 'center',
+                field: 'exec_ip', width: 120, title: '执行主机', align: 'center'
             }, {
-                field: 'task_group', width: 80, title: '执行组', align: 'center',
+                field: 'task_group', width: 80, title: '执行组', align: 'center'
             }, {
-                field: 'task_level', width: 80, title: '优先级', align: 'center',
+                field: 'task_level', width: 80, title: '优先级', align: 'center',sort: true
             }, {
-                field: 'task_name', width: 150, title: '任务名称', align: 'center',
+                field: 'task_name', width: 150, title: '任务名称', align: 'center'
             }, {
-                field: 'task_cmd', width: 200, title: '任务命令', align: 'center',
+                field: 'task_cmd', width: 200, title: '任务命令', align: 'center'
             }, {
                 field: 'task_status', width: 100, title: '状态', align: 'center', templet: '#statusTpl', unresize: true,
             }, {

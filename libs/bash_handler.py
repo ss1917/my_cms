@@ -17,14 +17,19 @@ class BaseHandler(RequestHandler):
             if 'exc_info' in kwargs and \
                             kwargs['exc_info'][0] == HTTPError:
                 message = kwargs['exc_info'][1].log_message
-            self.render('subgroup/404.html', message=message)
+            self.write(dict(status=status_code,msg='找不到页面'))
+            self.set_status(status_code)
+            return
+            #self.render('subgroup/404.html', message=message)
 
         elif status_code == 500:
-            self.render('subgroup/404.html', message=None)
+            self.set_status(404)
+            self.write(dict(status=500, msg='服务器内部错误'))
+            return
 
         elif status_code == 401:
             self.set_status(status_code)
-            self.set_header('WWW-Authenticate', 'Basic realm="cms"')
+            self.set_header('WWW-Authenticate', 'Basic realm="z"')
             self.write("Access denied")
         else:
             self.set_status(status_code)

@@ -28,6 +28,7 @@ class DealMQ(MessageQueueBase):
                                      queue_name='deal_task_sched')
 
     def my_run(self, flow_id, group_id):
+        print('xxx',flow_id, group_id)
         ME = MyExecute(flow_id, group_id)
         ME.exec_thread()
 
@@ -35,12 +36,15 @@ class DealMQ(MessageQueueBase):
         ### 标记为任务开始
         with DBContext('default') as session:
             session.query(TaskList.list_id).filter(TaskList.list_id == lid).update({TaskList.schedule: 'start'})
+            session.query(TaskSched).filter(TaskSched.list_id == lid, TaskSched.trigger ==
+                                            'hand').update({TaskSched.task_status: '5'})
             session.commit()
 
         threads = []
         #####取所有IP###
         for i in all_gid:
-            i = i[0].strip()
+            i = i[0]
+            print(i)
             if i:
                 threads.append(multiprocessing.Process(target=self.my_run, args=(lid, i,)))
         Logger.info("current has %d threads group execution " % len(threads))
@@ -88,8 +92,8 @@ class DealMQ(MessageQueueBase):
             else:
                 with DBContext('readonly') as session:
                     exist = session.query(TaskList.list_id).filter(TaskList.list_id == flow_id,
-                                                                      or_(TaskList.schedule == 'OK',
-                                                                          TaskList.schedule == 'start')).first()
+                                                                   or_(TaskList.schedule == 'OK',
+                                                                       TaskList.schedule == 'start')).first()
                 if exist:
                     Logger.info('task list id {0} is start or OK !!!'.format(body))
                 else:

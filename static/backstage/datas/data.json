@@ -12,7 +12,7 @@
         "pid": "0",
         "title": "作业列表",
         "icon": "&#xe79c;",
-        "url": "/static/backstage/templates/task/publish_list.html",
+        "url": "/static/backstage/templates/task/task_list.html",
         "spread": false
       },
       {
@@ -34,7 +34,7 @@
           {
             "id": "10",
             "pid": "0",
-            "title": "创建发布",
+            "title": "创建任务",
             "icon": "&#xe905;",
             "url": "html/temp.html",
             "spread": false
@@ -44,7 +44,7 @@
       {
         "id": "6",
         "pid": "0",
-        "title": "模型管理",
+        "title": "自定义任务",
         "icon": "&#xe889;",
         "url": "",
         "spread": false,
@@ -120,7 +120,7 @@
       {
         "id": "6",
         "pid": "0",
-        "title": "采集管理",
+        "title": "任务测试",
         "icon": "&#xe9b5;",
         "url": "",
         "spread": false,
@@ -128,9 +128,25 @@
           {
             "id": "7",
             "pid": "0",
-            "title": "采集节点管理",
-            "icon": "&#xe9b4;",
-            "url": "html/temp.html",
+            "title": "版本更新",
+            "icon": "&#xe839;",
+            "url": "/static/backstage/templates/submit_job/task_update.html",
+            "spread": false
+          },
+          {
+            "id": "7",
+            "pid": "0",
+            "title": "例行维护",
+            "icon": "&#xe6a2;",
+            "url": "/static/backstage/templates/submit_job/task_tjwh.html",
+            "spread": false
+          },
+          {
+            "id": "7",
+            "pid": "0",
+            "title": "迁区",
+            "icon": "&#xe6a2;",
+            "url": "/static/backstage/templates/submit_job/task_qianqu.html",
             "spread": false
           }
         ]
@@ -234,7 +250,7 @@
             "pid": "0",
             "title": "个人信息",
             "icon": "&#xe689;",
-            "url": "/panel/",
+            "url": "/static/backstage/html/panel/personal.html",
             "spread": false
           },
           {
@@ -242,7 +258,7 @@
             "pid": "0",
             "title": "修改密码",
             "icon": "&#xe7ce;",
-            "url": "/password/",
+            "url": "/static/backstage/html/panel/password.html",
             "spread": false
           }
         ]

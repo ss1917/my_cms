@@ -19,27 +19,29 @@ cookie_secret = '61oETzKXQAGaYdkL5gEmGeJJFuYh7EQnp2XdTP1o/Vo='
 token_secret = 'pXy5Fb4i%*83AIiOq18iodGq4ODQyMzcmlzcyI6ImF1dG'
 template_path = os.path.join(ROOT_DIR, "static", "backstage")
 static_path = os.path.join(ROOT_DIR, "static")
+accept_task_url = 'http://cms.test.com/v1/task/accept/'
+exec_method = 'salt'
 expire_seconds = 365 * 24 * 60 * 60
 
-DEFAULT_DB_DBHOST = '192.168.47.129'
+DEFAULT_DB_DBHOST = '172.16.0.223'
 DEFAULT_DB_DBPORT = '3306'
 DEFAULT_DB_DBUSER = 'root'
 DEFAULT_DB_DBPWD = 'ljXrcyn7chaBU4F'
-DEFAULT_DB_DBNAME = 'kf'
+DEFAULT_DB_DBNAME = 'zhi'
 
-READONLY_DB_DBHOST = '192.168.47.129'
+READONLY_DB_DBHOST = '172.16.0.223'
 READONLY_DB_DBPORT = '3306'
 READONLY_DB_DBUSER = 'root'
 READONLY_DB_DBPWD = 'ljXrcyn7chaBU4F'
-READONLY_DB_DBNAME = 'kf'
+READONLY_DB_DBNAME = 'zhi'
 
-DEFAULT_MQ_ADDR = '192.168.47.129'
+DEFAULT_MQ_ADDR = '172.16.0.223'
 DEFAULT_MQ_PORT = 5672
 DEFAULT_MQ_VHOST = '/'
 DEFAULT_MQ_USER = 'yz'
 DEFAULT_MQ_PWD = 'vuz84B2IkbEtXWF'
 
-DEFAULT_REDIS_HOST = '192.168.47.129'
+DEFAULT_REDIS_HOST = '172.16.0.223'
 DEFAULT_REDIS_PORT = 6379
 DEFAULT_REDIS_DB = 8
 DEFAULT_REDIS_AUTH = True
@@ -59,7 +61,9 @@ settings = dict(
     template_path=template_path,
     static_path=static_path,
     expire_seconds=expire_seconds,
-    app_name='cms',
+    app_name='zhi',
+    accept_task_url=accept_task_url,
+    exec_method=exec_method,
     databases={
         const.DEFAULT_DB_KEY: {
             const.DBHOST_KEY: DEFAULT_DB_DBHOST,

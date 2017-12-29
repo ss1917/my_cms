@@ -7,6 +7,7 @@ role   : 接受任务API
 '''
 
 import json
+import re
 from ast import literal_eval
 from libs.mqhelper import MessageQueueBase
 from libs.bash_handler import BaseHandler, LivenessProbe
@@ -22,40 +23,40 @@ def new_task(list_id, temp_id, *group_list):
         for g in group_list:
             temp_info = session.query(TempDetails).filter(TempDetails.temp_id == temp_id, TempDetails.group == g).all()
             for ip in ip_info:
-                ip = literal_eval(ip)
-                gip = ip[g].split(',')
+                gip = literal_eval(ip)[g].split(',')
                 for i in gip:
                     for t in temp_info:
                         session.add(
                             TaskSched(list_id=list_id, task_group=g, task_level=t.level, task_name=t.cmd_name,
-                                      task_cmd=t.command, task_args=t.args, trigger=t.trigger, exec_user=t.exec_user,
+                                      task_cmd=t.command, task_args=t.args, trigger=t.trigger,
+                                      exec_user=t.exec_user,
                                       forc_ip=t.forc_ip, exec_ip=i, task_status='1'))
 
         session.commit()
-        return 0
+    return 0
 
 
 class AcceptTaskHandler(BaseHandler):
     def get(self, *args, **kwargs):
-        greeting = self.get_argument('greeting', 'Hello')
-        self.write(greeting + ', friendly user!')
+        self.write(dict(status=-1,msg='请求方式有误'))
 
     def post(self, *args, **kwargs):
         data = json.loads(self.request.body.decode("utf-8"))
-        ### 首先判断参数是否完整（temp_id，hosts,task_name）必填
+        print(data)
+        ### 首先判断参数是否完整（temp_id，hosts,task_name,submitter）必填
         exec_time = data.get('exec_time', '2038-10-25 14:00:00')
         temp_id = str(data.get('temp_id', None))
         task_name = data.get('task_name', None)
         task_type = data.get('task_type', None)
-        submitter = data.get('submitter', self.get_current_user().decode("utf-8"))  ### 应根据登录的用户
+        submitter = data.get('submitter', None)  ### 应根据登录的用户
         executor = data.get('executor', '')  ### 审批人可以为空
         args = data.get('args', '')  ### 参数，可以为空
         hosts = data.get('hosts', None)  ### 执行主机，不能为空
         details = data.get('details', '')  ### 任务描述
-        if not hosts or not temp_id or not task_name:
+        if not hosts or not temp_id or not task_name or not submitter:
             json_data = {
                 'status': -2,
-                'msg': '主机和模板ID不能为空'
+                'msg': '主机,模板ID,提交人不能为空'
             }
             self.write(json_data)
 
@@ -68,8 +69,19 @@ class AcceptTaskHandler(BaseHandler):
                 TempDetails.group).all()
 
             for g in all_group:
-                g = g[0].strip()
+                g = g[0]
                 group_list.append(g)
+                host = hosts.get(g, None)
+                if not host:
+                    self.write(dict(status=4, msg="hosts不能为空"))
+                    return
+
+                '''
+                for ip in host.split(','):
+                    if not re.search(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b', ip):
+                        self.write(dict(status=5, msg="ip格式有误"))
+                        return
+                '''
                 hosts_dic[g] = hosts.get(g, '')
 
         if set(group_list).issubset(set(hosts.keys())):
@@ -88,7 +100,7 @@ class AcceptTaskHandler(BaseHandler):
             with MessageQueueBase('task_sced', 'direct', 'the_task') as save_paper_channel:
                 save_paper_channel.publish_message(str(new_list.list_id))
 
-            self.write(dict(status=0, msg="任务建立成功", list_id=new_list.list_id))
+            self.write(dict(status=0, msg="任务建立成功,任务ID为：{}".format(new_list.list_id), list_id=new_list.list_id))
         else:
             self.write(dict(status=3, msg="主机分组和模板分组不匹配"))
 

@@ -47,7 +47,10 @@
 <!-- 加载js文件 -->
 <script type="text/html" id="publishbar">
     <a class="layui-btn layui-btn-normal layui-btn-mini" lay-event="task_log">日志</a>
-    {{#  if(d.task_status == "5" ){ }}
+    {{#  if(d.executor == "ss" ){ }}
+    xxxx
+    {{#  } }}
+    {{#  if(d.trigger == "hand" ){ }}
     <a class="layui-btn layui-btn-mini" lay-event="hand">手动执行</a>
     {{#  } }}
     <a class="layui-btn layui-btn-warm layui-btn-mini" lay-event="redo">重做</a>
@@ -82,7 +85,7 @@
                 <button class="layui-btn layui-btn-mini layui-btn-warm layui-btn-radius" type="submit"
                         title={{ item1 }} data-type="search">{{ item1 }}
                 </button>
-                {{# } else if(item.task_status[item1] == "5" ) { }}
+                {{# } else if(d.task_status == "5" )  { }}
                 <button class="layui-btn layui-btn-mini layui-btn-radius" style="background-color:#2F4056" type="submit"
                         title={{ item1 }} data-type="search">{{ item1 }}
                 </button>

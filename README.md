@@ -12,8 +12,8 @@
 - 约束：暂无
 - 参数：暂无
 
-### python3 startup.py --port=8082  --service=publish
-- 功能描述：代码发布
+### python3 startup.py --port=8082  --service=submit_jobs
+- 功能描述：提交任务
 - 约束：暂无
 - 参数：暂无
 
