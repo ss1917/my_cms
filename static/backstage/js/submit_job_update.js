@@ -21,7 +21,8 @@ layui.use(['layer', 'form', 'table', 'laydate', 'common'], function () {
     });
 
     var project = $.getUrlParam('project');
-    console.log(project)
+    var temp_id = $.getUrlParam('temp_id');
+    console.log(project,temp_id)
 
     $('#larry_group .layui-btn').on('click', function () {
         var type = $(this).data('type');
@@ -51,8 +52,10 @@ layui.use(['layer', 'form', 'table', 'laydate', 'common'], function () {
             type: 'POST',
             data: JSON.stringify({
                 "project": project,
+                "temp_id": temp_id,
                 "zones": data.field.zones,
                 "version": data.field.version,
+                "app": data.field.application,
                 "sql": data.field.sql,
                 "stop": data.field.stop,
                 "details": data.field.details,

@@ -9,7 +9,7 @@ role   : 任务管理API
 
 import json
 from ast import literal_eval
-from libs.bash_handler import BaseHandler
+from libs.base_handler import BaseHandler
 from libs.db_context import DBContext
 from models.models import TaskList, TaskSched, TempDetails, TaskLog, ArgsList, model_to_dict
 from libs.auth_login import auth_login_redirect
@@ -23,6 +23,7 @@ class TaskListHandler(BaseHandler):
         limit = self.get_argument('limit', default=10, strip=True)
         limit_start = (int(page_size) - 1) * int(limit)
         task_list = []
+        username = self.get_current_user().decode('utf-8')
         if list_history == 'history':
             with DBContext('readonly') as session:
                 count = session.query(TaskList).filter(TaskList.schedule == 'OK').count()
@@ -38,6 +39,7 @@ class TaskListHandler(BaseHandler):
 
         for msg in task_info:
             data_dict = model_to_dict(msg)
+            data_dict['username'] = username
             data_dict['ctime'] = str(data_dict['ctime'])
             data_dict['stime'] = str(data_dict['stime'])
             task_list.append(data_dict)
@@ -87,7 +89,6 @@ class TaskListHandler(BaseHandler):
             return
 
         elif list_handle == "list_start" and start_time:
-            print(start_time)
             with DBContext('default') as session:
                 session.query(TaskList).filter(TaskList.list_id == list_id).update(
                     {TaskList.schedule: 'ready', TaskList.stime: start_time, TaskList.status: '1'})
@@ -145,6 +146,42 @@ class TaskSchedHandler(BaseHandler):
         hosts = self.get_argument('exec_ip', default=None, strip=True)
         group_list = []
         sched_list = []
+        hand_list = []
+        args_record = []
+        new_agrs_dict = {}
+        username = self.get_current_user().decode('utf-8')
+
+        if not list_id:
+            self.write(dict(status=-1, msg='订单ID不能为空'))
+            return
+
+        ### 取出手动干预任务
+        with DBContext('readonly') as session:
+            task_info = session.query(TaskList).filter(TaskList.list_id == list_id).first()
+            hand_task = session.query(TempDetails.cmd_name).filter(TempDetails.temp_id == task_info.temp_id,
+                                                                   TempDetails.trigger == 'hand').all()
+            ### 取出参数
+            argsinfo = session.query(ArgsList.args_name, ArgsList.args_self).all()
+            args_dict = literal_eval(task_info.args)
+
+        if args_dict:
+            for k, v in args_dict.items():
+                for i in argsinfo:
+                    args_record.append(i[1])
+                    if i[1] == k:
+                        new_agrs_dict[i[0]] = v
+                if k not in args_record:
+                    new_agrs_dict[k] = v
+
+        for h in hand_task:
+            hand_list.append(h[0])
+
+        ### 根据权限显示操作按钮
+        bt_hidden = 'true'
+        if username == task_info.executor or self.is_superuser():
+            bt_hidden = 'false'
+
+        ### 根据组和执行主机获取数据
         if group and hosts and list_id:
             with DBContext('readonly') as session:
                 sched_info = session.query(TaskSched).filter(TaskSched.list_id == list_id,
@@ -153,6 +190,7 @@ class TaskSchedHandler(BaseHandler):
                     TaskSched.task_group, TaskSched.task_level).all()
             for msg in sched_info:
                 data_dict = model_to_dict(msg)
+                data_dict['bt_hidden'] = bt_hidden
                 sched_list.append(data_dict)
             self.write(dict(code=0, msg='成功', data=sched_list))
             return
@@ -160,16 +198,15 @@ class TaskSchedHandler(BaseHandler):
         with DBContext('readonly') as session:
             sched_info = session.query(TaskSched).filter(TaskSched.list_id == list_id).order_by(
                 TaskSched.task_group, TaskSched.task_level).all()
-            task_info = session.query(TaskList).filter(TaskList.list_id == list_id).first()
             all_group = session.query(TaskSched.task_group).filter(TaskSched.list_id == list_id).group_by(
                 TaskSched.task_group).all()
 
         for msg in sched_info:
             data_dict = model_to_dict(msg)
+            data_dict['bt_hidden'] = bt_hidden
             sched_list.append(data_dict)
 
         task_hosts = literal_eval(task_info.hosts)
-        task_time = str(task_info.stime)
 
         for g in all_group:
             hosts = task_hosts.get(g[0], '10.10.10.10').split(',')
@@ -202,8 +239,11 @@ class TaskSchedHandler(BaseHandler):
 
         kwargs = {
             "data": sched_list,
-            "task_time": task_time,
+            "task_time": str(task_info.stime),
             "group_list": group_list,
+            "hand_list": hand_list,
+            "new_agrs": new_agrs_dict,
+            "args_keys": list(new_agrs_dict.keys()),
             "code": 0,
             "msg": '获取成功'
         }
@@ -215,6 +255,21 @@ class TaskSchedHandler(BaseHandler):
         list_id = data.get('list_id', None)
         sched_id = data.get('sched_id', None)
         task_handle = data.get('task_handle', None)
+        hand_task = data.get('hand_task', None)
+
+        if task_handle == "all_hand" and list_id:
+            if not hand_task:
+                self.write(dict(status=-1, msg='任务名称不正确'))
+                return
+
+            ### 审批所有
+            with DBContext('default') as session:
+                session.query(TaskSched).filter(TaskSched.list_id == list_id, TaskSched.task_name == hand_task).update(
+                    {TaskSched.task_status: '1', TaskSched.trigger: 'pass_hand'})
+                session.commit()
+            self.write(dict(status=0, msg='审核成功'))
+            return
+
         if not list_id or not sched_id:
             self.write(dict(status=-1, msg='参数不能为空'))
             return

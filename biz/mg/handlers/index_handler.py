@@ -7,7 +7,7 @@ role   : 索引页
 '''
 
 import json
-from libs.bash_handler import BaseHandler, LivenessProbe
+from libs.base_handler import BaseHandler, LivenessProbe
 from libs.auth_login import auth_login_redirect
 from libs.jwt_token import gen_md5
 from models.mg import Users

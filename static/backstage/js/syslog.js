@@ -22,13 +22,12 @@ layui.use(['layer', 'form', 'table', 'laydate', 'common'], function () {
             }, {
                 field: 'uri', width: 250, title: '请求URI', align: 'center',
             }, {
-                field: 'data', width: 400, title: '请求数据', align: 'center',
+                field: 'data', width: 450, title: '请求数据', align: 'center',
             }, {
                 field: 'ctime', width: 180, title: '时间', align: 'center',
             }]
-
         ],
-        url: '/v1/opt_log/?ctime='+yizhou,
+        url: '/v1/opt_log/?ctime=' + yizhou,
         page: true,
         even: true,
         id: 'logTables',

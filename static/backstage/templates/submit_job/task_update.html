@@ -30,8 +30,6 @@
                             <option value="3">爬山</option>
                             <option value="4">游戏</option>
                             <option value="5">台球</option>
-                            <option value="6">阅读</option>
-                            <option value="7">看电影</option>
                         </select>
                     </div>
                 </div>
@@ -40,6 +38,14 @@
                     <label class="layui-form-label">版本号</label>
                     <div class="layui-input-block">
                         <input type="text" name="version" maxlength="25" placeholder="版本号"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">应用名称</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="app" maxlength="80" placeholder="应用名称，半角逗号分隔，不填则代表全部"
                                autocomplete="off" class="layui-input">
                     </div>
                 </div>

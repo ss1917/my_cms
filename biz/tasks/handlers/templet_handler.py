@@ -2,7 +2,7 @@
 # -*-coding:utf-8-*-
 
 import json, datetime
-from libs.bash_handler import BaseHandler
+from libs.base_handler import BaseHandler
 from libs.db_context import DBContext
 from models.models import CmdList, TempList, TempDetails, ArgsList, model_to_dict
 from libs.auth_login import auth_login_redirect

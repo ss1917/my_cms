@@ -7,7 +7,7 @@ role   : system log
 '''
 
 import time, datetime
-from libs.bash_handler import BaseHandler
+from libs.base_handler import BaseHandler
 from models.mg import OperationRecord, model_to_dict
 from libs.db_context import DBContext
 from libs.auth_login import auth_login_redirect

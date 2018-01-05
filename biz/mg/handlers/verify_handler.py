@@ -6,7 +6,7 @@ date   : 2017年11月20日15:52:07
 role   : 登录、鉴权
 '''
 
-from libs.bash_handler import BaseHandler
+from libs.base_handler import BaseHandler
 from libs.jwt_token import AuthToken
 from libs.my_verify import MyVerify
 

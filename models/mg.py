@@ -46,7 +46,7 @@ class Users(Base):
     wechat = Column('wechat', String(50))  ### 微信号
     no = Column('no', String(50))  ### 工号
     department = Column('department', String(50))  ### 部门
-    superuser = Column('superuser', String(5))  ### 超级用户
+    superuser = Column('superuser', String(5), default='10')  ### 超级用户  0代表超级用户
     status = Column('status', String(5), default='0')
     last_ip = Column('last_ip', String(18), default='')
     last_login = Column('last_login', DateTime(), default=datetime.now, onupdate=datetime.now)

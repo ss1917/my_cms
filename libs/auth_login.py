@@ -6,7 +6,9 @@ date   : 2017年11月15日11:22:08
 role   : 登录装饰器
 '''
 
-import requests, json
+import requests
+import json
+import base64
 from settings import settings as app_settings
 from libs.jwt_token import AuthToken
 from models.mg import Users, OperationRecord
@@ -29,23 +31,35 @@ def auth_login_redirect(func):
             user_id = user_info.get('user_id', None)
             username = user_info.get('username', None)
             nickname = user_info.get('nickname', None)
+
             if not user_id:
                 self.redirect("/login/")
             else:
                 user_id = str(user_id)
                 self.set_secure_cookie("user_id", user_id)
+                self.set_cookie('enable_nickname', base64.b64encode(nickname.encode('utf-8')))
+                self.set_secure_cookie("nickname", nickname)
+                self.set_secure_cookie("username", username)
                 my_verify = MyVerify(user_id)
 
-        # verify = my_verify.get_verify(self.request.method, self.request.uri)
-        # 没权限，就让跳到权限页面 0代表有权限，1代表没权限
-        if my_verify.get_verify(self.request.method, self.request.uri) != 0:
-            '''如果没有权限，就刷新一次权限'''
-            my_verify.write_verify()
-
-        if my_verify.get_verify(self.request.method, self.request.uri) == 0:
-            print('没有权限')
-            self.redirect('/login/')
+        ### 防止明文cookie被篡改
+        enable_nickname = base64.b64decode(self.get_cookie('enable_nickname')).decode('utf-8')
+        if self.get_secure_cookie("nickname").decode('utf-8') != enable_nickname:
+            self.write(dict(status=403, msg='cookie error'))
             return
+
+        ### 如果不是超级管理员,开始鉴权
+        if not self.is_superuser():
+
+            # 没权限，就让跳到权限页面 0代表有权限，1代表没权限
+            if my_verify.get_verify(self.request.method, self.request.uri) != 0:
+                '''如果没有权限，就刷新一次权限'''
+                my_verify.write_verify()
+
+            if my_verify.get_verify(self.request.method, self.request.uri) == 0:
+                print('没有权限')
+                self.write(dict(status=403, msg="I'm sorry, you don't have this right"))
+                return
 
         ### 写入日志
         if self.request.method != 'GET':
@@ -56,7 +70,7 @@ def auth_login_redirect(func):
 
             with DBContext('default') as session:
                 session.add(OperationRecord(username=username, nickname=nickname, method=self.request.method,
-                                            uri=self.request.uri,data=str(data)))
+                                            uri=self.request.uri, data=str(data)))
                 session.commit()
 
         func(self, *args, **kwargs)

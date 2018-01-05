@@ -21,7 +21,7 @@
             </fieldset>
             <section class="larry-body animated fadeInRightBig">
                 <div class="larry-body-content clearfix">
-                    <div class="layui-row layui-col-space20 ">
+                    <div class="layui-row layui-col-space10 ">
                         <div class="layui-col-md6 layui-col-md-offset1">
                             <label class="layui-form-label">
                                 <div class="" id="larry_group">
@@ -44,34 +44,24 @@
     <div class="layui-form-item">
         <label class="layui-form-label">参数信息：</label>
         <div class="layui-input-block">
-            <table class="layui-table" lay-skin="line">
-                <colgroup>
-                    <col width="300">
-                    <col>
-                </colgroup>
-                <thead>
-                <tr>
-                    <th>参数</th>
-                    <th>值</th>
-                </tr>
-                </thead>
-                <tbody>
+            <blockquote class="layui-elem-quote layui-quote-nm">
                 {{# layui.each(d.args_keys, function(index, item){ }}
-                <tr>
-                    <td>{{ item }}</td>
-                    <td>{{ d.new_agrs[item] }}</td>
-                </tr>
+                <li>
+                    <div class="layui-col-md2">{{ item }}：</div>
+                    {{ d.new_agrs[item]}}
+                </li>
                 {{# }); }}
-                </tbody>
-            </table>
+            </blockquote>
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">任务描述：</label>
-        <div class="layui-input-block"></div>
         <div class="layui-input-block">
-            {{ d.details }}
+            <blockquote class="layui-elem-quote layui-quote-nm">
+                {{ d.details }}
+            </blockquote>
         </div>
+
     </div>
     <form class="layui-form">
         <div class="layui-form-item">

@@ -21,7 +21,6 @@ layui.use(['layer', 'form', 'table', 'laydate', 'common'], function () {
     });
 
     var project = $.getUrlParam('project');
-    console.log(project)
 
     $('#larry_group .layui-btn').on('click', function () {
         var type = $(this).data('type');
@@ -57,6 +56,7 @@ layui.use(['layer', 'form', 'table', 'laydate', 'common'], function () {
             }),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
+            async: false,
             success: function (data) {
                 if (data.status == 0) {
                     layer.msg(data.msg, {icon: 1, time: 1000});
@@ -68,7 +68,7 @@ layui.use(['layer', 'form', 'table', 'laydate', 'common'], function () {
                 }
 
             },
-            error: function (data) {
+            error: function () {
                 layer.msg('提交任务失败', {icon: 2, time: 1000});
             },
         });

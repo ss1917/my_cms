@@ -139,7 +139,7 @@ layui.use(['layer', 'form', 'table', 'common', 'element',], function () {
                             layer.msg(data.msg, {icon: 2, time: 1000});
                         }
                     },
-                    error: function (data) {
+                    error: function () {
                         layer.msg('释放失败', {icon: 2, time: 1000});
                     },
                 });

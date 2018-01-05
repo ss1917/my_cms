@@ -1,9 +1,11 @@
-layui.use(['layer', 'form', 'table', 'common'], function () {
+layui.use(['layer', 'form', 'table', 'common', 'util', 'laydate'], function () {
     var $ = layui.$,
         layer = layui.layer,
         form = layui.form,
         table = layui.table,
         laytpl = layui.laytpl,
+        util = layui.util,
+        laydate = layui.laydate,
         common = layui.common;
 
     //取url里面的参数
@@ -49,6 +51,26 @@ layui.use(['layer', 'form', 'table', 'common'], function () {
         view.innerHTML = html;
     });
 
+    // 手动干预的任务
+    var getTpl1 = task1.innerHTML,
+        view1 = document.getElementById('view1');
+    laytpl(getTpl1).render(data_init, function (html) {
+        view1.innerHTML = html;
+    });
+
+    var thisTimer, setCountdown = function () {
+        var endTime = new Date(data_init.task_time).getTime() //结束日期
+            , serverTime = new Date(); //假设为当前服务器时间，这里采用的是本地时间，实际使用一般是取服务端的
+        clearTimeout(thisTimer);
+        util.countdown(endTime, serverTime, function (date, serverTime, timer) {
+            var str = date[0] + '天' + date[1] + '时' + date[2] + '分' + date[3] + '秒';
+            lay('#djs').html(str);
+            thisTimer = timer;
+        });
+    };
+    setCountdown();
+
+
     var tableIns = table.render({
         elem: '#taskdetailsTables',
         cols: [
@@ -59,7 +81,7 @@ layui.use(['layer', 'form', 'table', 'common'], function () {
             }, {
                 field: 'task_group', width: 80, title: '执行组', align: 'center'
             }, {
-                field: 'task_level', width: 80, title: '优先级', align: 'center',sort: true
+                field: 'task_level', width: 80, title: '优先级', align: 'center', sort: true
             }, {
                 field: 'task_name', width: 150, title: '任务名称', align: 'center'
             }, {
@@ -216,6 +238,41 @@ layui.use(['layer', 'form', 'table', 'common'], function () {
                     exec_ip: hosts_search,
                 }
             });
+        },
+        all_hand: function () {
+            var input_value = [];
+            $(this).siblings().each(function (index, item) {
+                input_value.push($(item).val());
+            });
+            var hand_task = input_value[0];
+            layer.confirm('确定执行所有：' + hand_task + '？？？', function (index) {
+                $.ajax({
+                    url: "/v1/task/sched/",
+                    type: 'PUT',
+                    data: JSON.stringify({
+                        "list_id": list_id,
+                        "hand_task": hand_task,
+                        "task_handle": "all_hand"
+                    }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.status == 0) {
+                            layer.msg(data.msg, {icon: 1, time: 1000});
+                            layer.closeAll('page');
+                            setTimeout(function () {
+                            }, 1000);
+                        } else {
+                            layer.msg(data.msg, {icon: 2, time: 1000});
+                        }
+                    },
+                    error: function () {
+                        layer.msg('失败', {icon: 2, time: 1000});
+                    },
+                });
+                layer.close(index);
+            });
+
         },
         del: function () {
             var checkStatus = table.checkStatus('userTables'),

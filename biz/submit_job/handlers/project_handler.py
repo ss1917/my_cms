@@ -9,7 +9,7 @@ role   : 提交任务
 import json
 from settings import settings
 from libs.fetch_coroutine import fetch_coroutine
-from libs.bash_handler import BaseHandler
+from libs.base_handler import BaseHandler
 from libs.auth_login import auth_login_redirect
 from tornado.gen import Task, coroutine
 from tornado.web import asynchronous
@@ -27,12 +27,18 @@ class VersionUpdateHandler(BaseHandler):
         stop = data.get('stop', None)
         details = data.get('details', None)
         exec_time = data.get('stime', None)
-        project = data.get('project', '任务名称有误')
+        project = data.get('project', '名称有误')
+        temp_id = data.get('temp_id', None)
+
+        if not temp_id:
+            self.write(dict(status=-1, msg='模板ID不能为空'))
+            return
+
         if not zones:
-            self.write(dict(status=-1, msg='区不能为空'))
+            self.write(dict(status=-2, msg='区不能为空'))
             return
         if not version and not sql:
-            self.write(dict(status=-2, msg='至少需要版本或者数据库更新'))
+            self.write(dict(status=-3, msg='至少需要版本或者数据库更新'))
             return
 
         zones = ','.join(zones)
@@ -47,7 +53,7 @@ class VersionUpdateHandler(BaseHandler):
             self.write(dict(status=-3, msg='停机、不停机为必填项'))
             return
 
-        the_body = json.dumps({"task_name": str(project), "task_type": task_type, "temp_id": "4", "args": str(args),
+        the_body = json.dumps({"task_name": str(project), "task_type": task_type, "temp_id": temp_id, "args": str(args),
                                "details": str(details), "hosts": str(hosts),
                                "submitter": self.get_current_user().decode("utf-8"), "exec_time": exec_time})
         ### 协程请求生成任务的API，防止调用阻塞

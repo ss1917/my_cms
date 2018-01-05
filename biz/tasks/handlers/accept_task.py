@@ -10,7 +10,7 @@ import json
 import re
 from ast import literal_eval
 from libs.mqhelper import MessageQueueBase
-from libs.bash_handler import BaseHandler, LivenessProbe
+from libs.base_handler import BaseHandler, LivenessProbe
 from libs.db_context import DBContext
 from models.models import TaskList, TaskSched, TempDetails, TempList
 

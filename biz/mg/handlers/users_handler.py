@@ -11,7 +11,7 @@ status = '20'   禁用
 '''
 
 import json
-from libs.bash_handler import BaseHandler
+from libs.base_handler import BaseHandler
 from libs.db_context import DBContext
 from models.mg import Users, Roles, Functions, RoleFunctions, UserRoles, model_to_dict
 from libs.auth_login import auth_login_redirect

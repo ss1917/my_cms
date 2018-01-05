@@ -130,7 +130,7 @@
             "pid": "0",
             "title": "版本更新",
             "icon": "&#xe839;",
-            "url": "/static/backstage/templates/submit_job/task_update.html?project=yunwei test",
+            "url": "/static/backstage/templates/submit_job/task_update.html?project=yunwei test&temp_id=4",
             "spread": false
           },
           {
