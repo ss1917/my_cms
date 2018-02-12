@@ -14,6 +14,7 @@ from libs.jwt_token import AuthToken
 from models.mg import Users, OperationRecord
 from libs.db_context import DBContext
 from libs.my_verify import MyVerify
+from tornado.web import HTTPError
 
 
 ### 处理刷新页面的请求
@@ -23,8 +24,7 @@ def auth_login_redirect(func):
         auth_key = self.get_cookie('auth_key', None)
         if not auth_key:
             # 没登录，就让跳到登陆页面
-            self.redirect("/login/")
-            return
+            raise HTTPError(401, 'auth failed')
         else:
             authtoken = AuthToken()
             user_info = authtoken.decode_auth_token(auth_key)
@@ -33,7 +33,7 @@ def auth_login_redirect(func):
             nickname = user_info.get('nickname', None)
 
             if not user_id:
-                self.redirect("/login/")
+                raise HTTPError(401, 'auth failed')
             else:
                 user_id = str(user_id)
                 self.set_secure_cookie("user_id", user_id)
@@ -45,8 +45,7 @@ def auth_login_redirect(func):
         ### 防止明文cookie被篡改
         enable_nickname = base64.b64decode(self.get_cookie('enable_nickname')).decode('utf-8')
         if self.get_secure_cookie("nickname").decode('utf-8') != enable_nickname:
-            self.write(dict(status=403, msg='cookie error'))
-            return
+            raise HTTPError(403, 'cookie error!')
 
         ### 如果不是超级管理员,开始鉴权
         if not self.is_superuser():
@@ -57,9 +56,7 @@ def auth_login_redirect(func):
                 my_verify.write_verify()
 
             if my_verify.get_verify(self.request.method, self.request.uri) == 0:
-                print('没有权限')
-                self.write(dict(status=403, msg="I'm sorry, you don't have this right"))
-                return
+                raise HTTPError(403, 'request forbidden!')
 
         ### 写入日志
         if self.request.method != 'GET':
@@ -138,47 +135,3 @@ def auth_login_redirect_bak(func):
 
     return inner
 
-
-'''
-from django.http import HttpResponse,HttpResponseRedirect
-import  requests
-    
-def auth_login_redirect_bak(func):
-    def inner(self, *args, **kwargs):
-        ###
-        sso_tn = self.get_argument('sso_tn', None)
-        server_url = '你的服务url'
-        sso_validate = '验证信息的url'
-        sso_login = '登录的url'
-        ### authtoken = AuthToken()
-
-        if sso_tn:
-            ### 如果带返回值就去获取用户信息
-            validate_args = {'sso_tn': sso_tn}
-            v = requests.get(sso_validate, params=validate_args)
-            r_info = json.loads(v.text)
-            status = r_info.get('status', -111)
-            if status == -111 or status == 101:
-                ### 跳转登录
-                return HttpResponseRedirect(sso_login+'?appkey='+ appkey)
-            
-            user_info = json.loads(r_info['memberdata'])
-            user_id = user_info.get('uid', None)
-            username = user_info.get('nickname', None)
-            
-            ### 这里已经获取到了 用户名和用户ID了
-            ### 写入session或者cookie,下面以session为例
-            request.session['user_id'] = user_id
-            request.session['username'] = username
-
-
-        my_username = request.session['username']
-        if not my_username:
-            ### 没登录，就让跳到登陆页面
-            return HttpResponseRedirect(sso_login+'?appkey='+ appkey)
-
-        # 执行post方法或get方法
-        func(self, *args, **kwargs)
-
-    return inner
-'''

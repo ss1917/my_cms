@@ -23,10 +23,15 @@
                 <fieldset class="layui-elem-field layui-field-title site-title">
                     <legend><a name="color-design">任务详情</a></legend>
                 </fieldset>
-                <div id="view"></div>
-                <fieldset class="layui-elem-field layui-field-title site-title">
-                    <table id="taskdetailsTables" lay-filter="taskdetailsTables"></table>
-                </fieldset>
+                <div class="layui-row layui-col-space25">
+                    <div class="layui-col-md3">
+                        <div id="view"></div>
+                    </div>
+                    <div class="layui-col-md9">
+                        <table id="taskdetailsTables" lay-filter="taskdetailsTables"></table>
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -46,31 +51,50 @@
 </script>
 
 <script id="task1" type="text/html">
-    <blockquote class="layui-elem-quote layui-quote-nm">
-        <div class="layui-col-md1">执行时间：</div>
-        <div id="djs"></div>
-    </blockquote>
+    <div class="layui-row layui-col-space15">
 
-    <blockquote class="layui-elem-quote layui-quote-nm">
-        <div class="layui-col-md1">人工干预：</div>
-        {{# layui.each(d.hand_list, function(index, item){ }}
-        <div class="layui-inline">
-            <input class="layui-input" name="hand_task" value="{{item}}" type="hidden" autocomplete="off">
-            <button data-anim="layui-anim-rotate" class="layui-btn layui-btn-primary layui-btn-mini"
-                    lay-event="all_hand" data-type="all_hand">{{item}}
-            </button>
+        <div class="layui-col-md12">
+            <blockquote class="layui-elem-quote layui-quote-nm">
+                <div class="layui-row">
+                    <div class="layui-col-md3">
+                        执行时间：
+                    </div>
+                    <div class="layui-col-md9">
+                        <div id="djs"></div>
+                    </div>
+
+                </div>
+                {{# layui.each(d.args_keys, function(index, item){ }}
+                <li>
+                    <div class="layui-col-md3">{{ item }}：</div>
+                    {{ d.new_agrs[item]}}
+                </li>
+                {{# }); }}
+            </blockquote>
         </div>
-        {{# }); }}
-    </blockquote>
+    </div>
 
-    <blockquote class="layui-elem-quote layui-quote-nm">
-        {{# layui.each(d.args_keys, function(index, item){ }}
-        <li>
-            <div class="layui-col-md1">{{ item }}：</div>
-            {{ d.new_agrs[item]}}
-        </li>
-        {{# }); }}
-    </blockquote>
+    <div class="layui-col-md12">
+        <blockquote class="layui-elem-quote layui-quote-nm">
+            <div class="layui-row">
+                <div class="layui-col-md3">
+                    人工干预：
+                </div>
+                <div class="layui-col-md9">
+                    {{# layui.each(d.hand_list, function(index, item){ }}
+                    <div class="layui-inline">
+                        <input class="layui-input" name="hand_task" value="{{item}}" type="hidden"
+                               autocomplete="off">
+                        <button data-anim="layui-anim-rotate" class="layui-btn layui-btn-primary layui-btn-mini"
+                                lay-event="all_hand" data-type="all_hand">{{item}}
+                        </button>
+                    </div>
+                    {{# }); }}
+                </div>
+            </div>
+        </blockquote>
+    </div>
+
 </script>
 <script id="task" type="text/html">
     {{# layui.each(d.group_list, function(index, item){ }}
@@ -82,27 +106,33 @@
                 <input class="layui-input" name="group" value="{{item.group}}" type="hidden" autocomplete="off">
                 <input class="layui-input" name="hosts" value="{{item1}}" type="hidden" autocomplete="off">
                 {{# if(item.task_status[item1] == "0" ){ }}
-                <button class="layui-btn layui-btn-mini layui-btn-primary layui-btn-radius" type="submit"
+                <button class="layui-btn layui-btn-mini layui-btn-primary layui-btn-radius" style="margin:5px auto;"
+                        type="submit"
                         title={{ item1 }} data-type="search">{{ item1 }}
                 </button>
                 {{# } else if(item.task_status[item1] == "1" ) { }}
-                <button class="layui-btn layui-btn-mini layui-btn-radius" style="background-color:#708090" type="submit"
+                <button class="layui-btn layui-btn-mini layui-btn-radius"
+                        style="background-color:#708090; margin:5px auto;" type="submit"
                         title={{ item1 }} data-type="search">{{ item1 }}
                 </button>
                 {{# } else if(item.task_status[item1] == "2" ) { }}
-                <button class="layui-btn layui-btn-mini layui-btn-normal layui-btn-radius" type="submit"
+                <button class="layui-btn layui-btn-mini layui-btn-normal layui-btn-radius" style="margin:5px auto;"
+                        type="submit"
                         title={{ item1 }} data-type="search">{{ item1 }}
                 </button>
                 {{# } else if(item.task_status[item1] == "3" ) { }}
-                <button class="layui-btn layui-btn-mini layui-btn-radius" style="background-color:#5FB878" type="submit"
+                <button class="layui-btn layui-btn-mini layui-btn-radius"
+                        style="background-color:#5FB878; margin:5px auto;" type="submit"
                         title={{ item1 }} data-type="search">{{ item1 }}
                 </button>
                 {{# } else if(item.task_status[item1] == "4" ) { }}
-                <button class="layui-btn layui-btn-mini layui-btn-warm layui-btn-radius" type="submit"
+                <button class="layui-btn layui-btn-mini layui-btn-warm layui-btn-radius" style="margin:5px auto;"
+                        type="submit"
                         title={{ item1 }} data-type="search">{{ item1 }}
                 </button>
                 {{# } else if(d.task_status == "5" ) { }}
-                <button class="layui-btn layui-btn-mini layui-btn-radius" style="background-color:#2F4056" type="submit"
+                <button class="layui-btn layui-btn-mini layui-btn-radius"
+                        style="background-color:#2F4056; margin:5px auto;" type="submit"
                         title={{ item1 }} data-type="search">{{ item1 }}
                 </button>
                 {{# } }}

@@ -75,8 +75,6 @@ layui.use(['layer', 'form', 'table', 'common', 'util', 'laydate'], function () {
         elem: '#taskdetailsTables',
         cols: [
             [{
-                field: '', width: 60, title: ''
-            }, {
                 field: 'exec_ip', width: 180, title: '执行主机', align: 'center'
             }, {
                 field: 'task_group', width: 80, title: '执行组', align: 'center'

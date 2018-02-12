@@ -11,6 +11,8 @@ status = '20'   禁用
 '''
 
 import json
+import shortuuid
+import base64
 from libs.base_handler import BaseHandler
 from libs.db_context import DBContext
 from models.mg import Users, Roles, Functions, RoleFunctions, UserRoles, model_to_dict
@@ -37,6 +39,7 @@ class UserHandler(BaseHandler):
         for msg in user_info:
             data_dict = model_to_dict(msg)
             data_dict.pop('password')
+            data_dict.pop('google_key')
             data_dict['last_login'] = str(data_dict['last_login'])
             data_dict['ctime'] = str(data_dict['ctime'])
             user_list.append(data_dict)
@@ -74,10 +77,12 @@ class UserHandler(BaseHandler):
             self.write(dict(status=-3, msg='手机号已注册'))
             return
 
+        google_key = base64.b32encode(bytes(shortuuid.uuid() + shortuuid.uuid(), encoding="utf-8")).decode("utf-8")
+
         with DBContext('default') as session:
             session.add(Users(username=username, password='7d491c440ba46ca20fde0c5be1377aec',
-                              nickname=nickname, department=department, tel=tel,
-                              wechat=wechat, no=no, email=email, superuser='10'))
+                              nickname=nickname, department=department, tel=tel, wechat=wechat, no=no, email=email,
+                              google_key=google_key, superuser='10'))
             session.commit()
         self.write(dict(status=0, msg='新用户密码为：shenshuo'))
 
@@ -276,7 +281,6 @@ class RoleUserHandler(BaseHandler):
                                       Users.username, Users.nickname
                                       ).outerjoin(UserRoles, Roles.role_id == UserRoles.role_id).outerjoin(
                 Users, Users.user_id == UserRoles.user_id).order_by(Roles.role_id)
-            print(role_info)
         for i in role_info:
             data_dict = model_to_dict(i[0])
             data_dict['ctime'] = str(data_dict['ctime'])
@@ -285,7 +289,6 @@ class RoleUserHandler(BaseHandler):
             data_dict['nickname'] = i[3]
             role_list.append(data_dict)
 
-        print(data_dict)
         kargs = {
             "data": role_list,
             "count": 1000,
@@ -296,18 +299,30 @@ class RoleUserHandler(BaseHandler):
 
 class RoleFuncHandler(BaseHandler):
     @auth_login_redirect
-    def get(self, role_id):
+    def get(self, user_id):
         func_list = []
-        with DBContext('readonly') as session:
-            func_id_list = session.query(RoleFunctions.func_id).filter(RoleFunctions.role_id == role_id,
-                                                                       RoleFunctions.status == '0').all()
-        for f in func_id_list:
-            func = session.query(Functions).filter(Functions.func_id == f[0], Functions.status == '0').all()
-            for msg in func:
-                func_list.append(model_to_dict(msg))
-
         kargs = {
             "data": str(func_list),
+            "status": 0,
+        }
+        self.write(kargs)
+
+
+class UserFuncHandler(BaseHandler):
+    @auth_login_redirect
+    def get(self, *args, **kwargs):
+        user_id = 2
+        with DBContext('readonly') as session:
+            func_list = session.query(Functions.method_type, Functions.uri
+                                      ).outerjoin(RoleFunctions, Functions.func_id == RoleFunctions.func_id).outerjoin(
+                UserRoles, RoleFunctions.role_id == UserRoles.role_id).filter(UserRoles.user_id == user_id).all()
+
+        for func in func_list:
+            print(str(user_id) + func[0], func[1])
+            data = {func[1]: func[0]}
+
+        kargs = {
+            "data": data,
             "status": 0,
         }
         self.write(kargs)
@@ -318,6 +333,7 @@ user_mg_urls = [
     (r"/v1/accounts/role/", RoleHandler),
     (r"/v1/accounts/role_user/(\d+)/", RoleUserHandler),
     (r"/v1/accounts/role_func/(\d+)/", RoleFuncHandler),
+    (r"/v1/accounts/user_func/", UserFuncHandler),
     (r"/v1/accounts/func/", FuncHandler),
 ]
 

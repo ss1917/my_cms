@@ -211,6 +211,7 @@ layui.define(['jquery', 'larryElem', 'layer', 'common'], function(exports) {
         success: function(result, status, xhr) {
           // 取得数据
           _that.larryCompleteMenu(result);
+          //_that.larryCompleteMenu(result.data);
         },
         error: function(xhr, status, error) {
           common.larryCmsError('LarryMS Error: ' + error, common.larryCore.errorDataTit);

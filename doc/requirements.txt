@@ -10,3 +10,4 @@ redis==2.10.6
 PyJWT
 cryptography
 fire
+pyotp

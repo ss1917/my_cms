@@ -26,25 +26,23 @@ class BaseHandler(RequestHandler):
         return False
 
     def write_error(self, status_code, **kwargs):
-        if status_code in (404, 403):
-            message = None
-            if 'exc_info' in kwargs and \
-                    kwargs['exc_info'][0] == HTTPError:
-                message = kwargs['exc_info'][1].log_message
-            self.write(dict(status=status_code, msg='找不到页面'))
+        if status_code == 404:
             self.set_status(status_code)
+            self.write('页面被外星人劫持了')
             return
-            # self.render('subgroup/404.html', message=message)
+
+        elif status_code == 403:
+            self.set_status(status_code)
+            self.finish('sorry, request forbidden!')
 
         elif status_code == 500:
-            self.set_status(404)
-            self.write(dict(status=500, msg='服务器内部错误'))
-            return
+            self.set_status(status_code)
+            self.finish('服务器内部错误')
 
         elif status_code == 401:
             self.set_status(status_code)
-            self.set_header('WWW-Authenticate', 'Basic realm="z"')
-            self.write("Access denied")
+            self.redirect("/login/")
+            return
         else:
             self.set_status(status_code)
 

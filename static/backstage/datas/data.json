@@ -37,7 +37,8 @@
             "title": "创建任务",
             "icon": "&#xe905;",
             "url": "html/temp.html",
-            "spread": false
+            "spread": false,
+            "children":[]
           }
         ]
       },
@@ -300,7 +301,7 @@
             "pid": "0",
             "title": "菜单管理",
             "icon": "&#xe6e2;",
-            "url": "html/temp.html",
+            "url": "/static/backstage/subgroup/menu.html",
             "spread": false
           },
           {

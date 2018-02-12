@@ -18,6 +18,17 @@ CREATE TABLE `operation_record` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
+##### 记录注册服务器
+CREATE TABLE `ra_server` (
+  `service_id` int(11) NOT NULL AUTO_INCREMENT,
+  `service` varchar(200) NOT NULL,
+  `ticket` varchar(80) NOT NULL,
+  `details` varchar(50),
+  `ctime` datetime DEFAULT NULL,
+  PRIMARY KEY (`service_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+
 ##### 用户表
 CREATE TABLE `users` (
   `user_id` int(11) NOT NULL AUTO_INCREMENT,
@@ -29,6 +40,7 @@ CREATE TABLE `users` (
   `wechat` varchar(50),
   `no` varchar(50) NOT NULL,
   `department` varchar(50) NOT NULL,
+  `google_key` varchar(80) NOT NULL,
   `superuser` varchar(5) NOT NULL,
   `status` varchar(5) NOT NULL,
   `last_ip` varchar(18) NOT NULL,
@@ -71,7 +83,11 @@ CREATE TABLE `functions` (
   `ctime` datetime DEFAULT NULL,
   PRIMARY KEY (`func_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+insert into functions value(1,'test1','/test1/','POST','0','2017-12-21 14:26:04','2017-12-21 14:26:04');
 insert into functions value(2,'test','/test/','GET','0','','');
+insert into functions value(3,'test3','/test3/','PUT','0','2017-12-21 14:26:04','2017-12-21 14:26:04');
+insert into functions value(4,'test4','/shenshuo/','GET','0','2017-12-21 14:26:04','2017-12-21 14:26:04');
+insert into functions value(5,'test5','/shenshuo1/','GET','0','2017-12-21 14:26:04','2017-12-21 14:26:04');
 
 ### 角色权限关联表
 CREATE TABLE `role_functions` (
@@ -84,6 +100,34 @@ CREATE TABLE `role_functions` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 insert into role_functions value(2,'2','2','0','','');
+insert into role_functions value(1,'3','3','0','2017-12-21 14:26:04','2017-12-21 14:26:04');
+insert into role_functions value(3,'4','5','0','2017-12-21 14:26:04','2017-12-21 14:26:04');
+insert into role_functions value(4,'2','4','0','2017-12-21 14:26:04','2017-12-21 14:26:04');
+
+
+### 菜单表
+CREATE TABLE `menus` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `pid` int(11) NOT NULL,
+  `title` varchar(30) NOT NULL,
+  `font` varchar(30) NOT NULL,
+  `icon` varchar(30) NOT NULL,
+  `url` varchar(150) ,
+  `spread` BOOLEAN ,
+  `sort` int(11) DEFAULT 10,
+  `ctime` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+
+###角色菜单关联表
+CREATE TABLE `role_menus` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `role_id` varchar(11) NOT NULL,
+  `menu_id` varchar(11) NOT NULL,
+  `ctime` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 ##### 任务列表
 

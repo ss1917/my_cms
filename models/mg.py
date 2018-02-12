@@ -5,7 +5,7 @@ author : shenshuo
 date   : 2017年11月15日13:43:09
 role   : 管理
 '''
-from sqlalchemy import Column, String, Integer, Text, DateTime
+from sqlalchemy import Column, String, Integer, Boolean, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import class_mapper
 from datetime import datetime
@@ -33,6 +33,17 @@ class OperationRecord(Base):
     ctime = Column('ctime', DateTime(), default=datetime.now, onupdate=datetime.now)
 
 
+class RAServer(Base):
+    __tablename__ = 'ra_server'
+
+    ### 记录注册服务器
+    service_id = Column('service_id', Integer, primary_key=True, autoincrement=True)
+    service = Column('service', String(200))
+    ticket = Column('ticket', String(80))
+    details = Column('details', String(50))
+    ctime = Column('ctime', DateTime(), default=datetime.now, onupdate=datetime.now)
+
+
 class Users(Base):
     __tablename__ = 'users'
 
@@ -46,6 +57,7 @@ class Users(Base):
     wechat = Column('wechat', String(50))  ### 微信号
     no = Column('no', String(50))  ### 工号
     department = Column('department', String(50))  ### 部门
+    google_key = Column('google_key', String(80))  ### 谷歌认证秘钥
     superuser = Column('superuser', String(5), default='10')  ### 超级用户  0代表超级用户
     status = Column('status', String(5), default='0')
     last_ip = Column('last_ip', String(18), default='')
@@ -60,7 +72,7 @@ class Roles(Base):
     role_id = Column('role_id', Integer, primary_key=True, autoincrement=True)
     role_name = Column('role_name', String(30))
     status = Column('status', String(5), default='0')
-    ctime = Column('ctime', DateTime(), default=datetime.now,onupdate=datetime.now)
+    ctime = Column('ctime', DateTime(), default=datetime.now, onupdate=datetime.now)
 
 
 class UserRoles(Base):
@@ -98,3 +110,28 @@ class RoleFunctions(Base):
     status = Column('status', String(5), default='0')
     utime = Column('utime', DateTime(), default=datetime.now, onupdate=datetime.now)
     ctime = Column('ctime', DateTime(), default=datetime.now)
+
+
+class Menu(Base):
+    __tablename__ = 'menus'
+
+    ### 菜单表
+    id = Column('id', Integer, primary_key=True, autoincrement=True)
+    pid = Column('pid', Integer)
+    title = Column('title', String(30))
+    font = Column('font', String(30))
+    icon = Column('icon', String(30))
+    url = Column('url', String(150))
+    spread = Column('spread', Boolean)  ### 是否有下一级
+    sort = Column('sort', Integer, default=10)  ### 排序
+    ctime = Column('ctime', DateTime(), default=datetime.now, onupdate=datetime.now)
+
+
+class RoleMenus(Base):
+    __tablename__ = 'role_menus'
+
+    ### 角色菜单关联表
+    id = Column('id', Integer, primary_key=True, autoincrement=True)
+    role_id = Column('role_id', String(11))
+    menu_id = Column('menu_id', String(11))
+    ctime = Column('ctime', DateTime(), default=datetime.now, onupdate=datetime.now)

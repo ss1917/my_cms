@@ -2,14 +2,15 @@
 # -*-coding:utf-8-*-
 '''
 Author : ming
-date   : 2017/4/14 上午9:42
-role   : Version Update
+date   : 2018年1月12日13:43:27
+role   : 定制 Application
 '''
 from shortuuid import uuid
 from tornado import httpserver, ioloop
 from tornado import options as tnd_options
 from tornado.options import options, define
 from tornado.web import Application as tornado_app
+from libs.logs import Logger
 
 define("addr", default='0.0.0.0', help="run on the given ip address", type=str)
 define("port", default=8000, help="run on the given port", type=int)
@@ -22,7 +23,7 @@ class Application(tornado_app):
     def __init__(self, handlers=None, default_host="",
                  transforms=None, **settings):
         tnd_options.parse_command_line()
-        #Logger().init_logger(options.progid)
+        # Logger().init_logger(options.progid)
         super(Application, self).__init__(handlers, default_host,
                                           transforms, **settings)
         http_server = httpserver.HTTPServer(self)
@@ -36,8 +37,7 @@ class Application(tornado_app):
         """
         try:
             print('progressid: %(progid)s' % dict(progid=options.progid))
-            print('server address: %(addr)s:%(port)d' % dict(addr=options.addr,
-                                                                   port=options.port))
+            print('server address: %(addr)s:%(port)d' % dict(addr=options.addr, port=options.port))
             print('web server start sucessfuled.')
             self.io_loop.start()
         except KeyboardInterrupt:
